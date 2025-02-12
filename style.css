@@ -1,155 +1,254 @@
-/* Reset básico */
-* {
-    box-sizing: border-box;
+document.addEventListener("DOMContentLoaded", function() {
+
+    // Função para obter parâmetros da URL
+    function getQueryParam(param) {
+      const params = new URLSearchParams(window.location.search);
+      return params.get(param);
+    }
+  
+    /* ====================
+       Página Inicial (index.html)
+       ==================== */
+    const characterListContainer = document.getElementById("character-list");
+    if (characterListContainer) {
+      const characters = JSON.parse(localStorage.getItem("characters") || "[]");
+      characterListContainer.innerHTML = "";
+  
+      if (characters.length === 0) {
+        characterListContainer.innerHTML = "<p>Nenhum personagem criado.</p>";
+      } else {
+        characters.forEach(function(character, index) {
+          const card = document.createElement("div");
+          card.className = "character-card";
+  
+          // Cria um link que envolve a imagem para direcionar à página de visualização
+          const link = document.createElement("a");
+          link.href = "view.html?index=" + index;
+  
+          const img = document.createElement("img");
+          img.src = character.imagem;
+          img.alt = character.nome;
+          img.className = "character-image";
+          link.appendChild(img);
+  
+          const nameEl = document.createElement("h3");
+          nameEl.textContent = character.nome;
+  
+          card.appendChild(link);
+          card.appendChild(nameEl);
+          characterListContainer.appendChild(card);
+        });
+      }
+    }
+  
+    /* ====================
+       Página de Criação (create.html)
+       ==================== */
+    const createForm = document.getElementById("create-character-form");
+    if (createForm) {
+      createForm.addEventListener("submit", function(event) {
+        event.preventDefault();
+  
+        // Cria o objeto personagem com os valores do formulário (incluindo a imagem)
+        const character = {
+          nome: document.getElementById("nome").value,
+          imagem: document.getElementById("imagem").value,
+          estilos: {
+            poderoso: parseInt(document.getElementById("poderoso").value) || 0,
+            ligeiro: parseInt(document.getElementById("ligeiro").value) || 0,
+            preciso: parseInt(document.getElementById("preciso").value) || 0,
+            capcioso: parseInt(document.getElementById("capcioso").value) || 0
+          },
+          habilidades: {
+            agarrao: parseInt(document.getElementById("agarrao").value) || 0,
+            armazenamento: parseInt(document.getElementById("armazenamento").value) || 0,
+            assegurar: parseInt(document.getElementById("assegurar").value) || 0,
+            busca: parseInt(document.getElementById("busca").value) || 0,
+            chamado: parseInt(document.getElementById("chamado").value) || 0,
+            cura: parseInt(document.getElementById("cura").value) || 0,
+            exibicao: parseInt(document.getElementById("exibicao").value) || 0,
+            golpe: parseInt(document.getElementById("golpe").value) || 0,
+            manufatura: parseInt(document.getElementById("manufatura").value) || 0,
+            estudo: parseInt(document.getElementById("estudo").value) || 0,
+            tiro: parseInt(document.getElementById("tiro").value) || 0,
+            travessia: parseInt(document.getElementById("travessia").value) || 0
+          },
+          tracos: document.getElementById("tracos").value,
+          utensilio: {
+            nome: document.getElementById("nomeUtensilio").value,
+            resistencia: parseInt(document.getElementById("resistencia").value) || 0,
+            descricao: document.getElementById("descricaoUtensilio").value
+          }
+        };
+  
+        const characters = JSON.parse(localStorage.getItem("characters") || "[]");
+        characters.push(character);
+        localStorage.setItem("characters", JSON.stringify(characters));
+  
+        // Redireciona automaticamente para a tela inicial
+        window.location.href = "index.html";
+      });
+    }
+  
+    /* ====================
+       Página de Visualização (view.html)
+       ==================== */
+    const characterDetailsContainer = document.getElementById("character-details");
+    if (characterDetailsContainer) {
+      const index = getQueryParam("index");
+      const characters = JSON.parse(localStorage.getItem("characters") || "[]");
+  
+      if (index === null || isNaN(index) || index < 0 || index >= characters.length) {
+        characterDetailsContainer.innerHTML = "<p>Personagem não encontrado.</p>";
+      } else {
+        const character = characters[index];
+        const detailsHTML = `
+          <h2>${character.nome}</h2>
+          <img src="${character.imagem}" alt="${character.nome}" class="character-image-large">
+          <h3>Estilos</h3>
+          <p>Poderoso: ${character.estilos.poderoso}, Ligeiro: ${character.estilos.ligeiro}, Preciso: ${character.estilos.preciso}, Capcioso: ${character.estilos.capcioso}</p>
+          <h3>Habilidades</h3>
+          <p>
+            Agarrão: ${character.habilidades.agarrao}, Armazenamento: ${character.habilidades.armazenamento}, Assegurar: ${character.habilidades.assegurar}, Busca: ${character.habilidades.busca}<br>
+            Chamado: ${character.habilidades.chamado}, Cura: ${character.habilidades.cura}, Exibição: ${character.habilidades.exibicao}, Golpe: ${character.habilidades.golpe}<br>
+            Manufatura: ${character.habilidades.manufatura}, Estudo: ${character.habilidades.estudo}, Tiro: ${character.habilidades.tiro}, Travessia: ${character.habilidades.travessia}
+          </p>
+          <h3>Traços</h3>
+          <p>${character.tracos}</p>
+          <h3>Utensílio</h3>
+          <p>Nome: ${character.utensilio.nome}, Resistência: ${character.utensilio.resistencia}<br>
+          Descrição: ${character.utensilio.descricao}</p>
+        `;
+        characterDetailsContainer.innerHTML = detailsHTML;
+      }
+    }
+  });
+  // Função para exportar personagens
+function exportCharacters() {
+  const characters = JSON.parse(localStorage.getItem("characters") || "[]");
+  const dataStr = JSON.stringify(characters, null, 2);
+  const dataBlob = new Blob([dataStr], { type: "application/json" });
+  
+  const url = URL.createObjectURL(dataBlob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `personagens_${new Date().toISOString().split('T')[0]}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// Função para importar personagens
+function importCharacters(file) {
+  const reader = new FileReader();
+  
+  reader.onload = function(e) {
+    try {
+      const importedChars = JSON.parse(e.target.result);
+      const existingChars = JSON.parse(localStorage.getItem("characters") || "[]");
+      
+      // Validação básica da estrutura
+      if (!Array.isArray(importedChars) || !importedChars.every(c => c.nome && c.imagem)) {
+        throw new Error("Formato de arquivo inválido");
+      }
+      
+      // Mescla os personagens (substitui duplicados pelo nome)
+      const mergedChars = [...existingChars];
+      importedChars.forEach(newChar => {
+        const index = mergedChars.findIndex(c => c.nome === newChar.nome);
+        if (index > -1) {
+          mergedChars[index] = newChar; // Substitui existente
+        } else {
+          mergedChars.push(newChar); // Adiciona novo
+        }
+      });
+      
+      localStorage.setItem("characters", JSON.stringify(mergedChars));
+      alert(`Sucesso! ${importedChars.length} personagens importados.`);
+      window.location.reload();
+    } catch (error) {
+      alert("Erro na importação: " + error.message);
+    }
+  };
+  
+  reader.readAsText(file);
+}
+
+// Adicione no evento DOMContentLoaded (no final do listener principal)
+document.getElementById("export-characters")?.addEventListener("click", exportCharacters);
+document.getElementById("import-characters")?.addEventListener("click", () => {
+  document.getElementById("file-input").click();
+});
+document.getElementById("file-input").addEventListener("change", (e) => {
+  if (e.target.files[0]) {
+    if (confirm("Isso substituirá personagens com nomes iguais. Continuar?")) {
+      importCharacters(e.target.files[0]);
+    }
+  }
+});
+
+// Função para exportar personagens
+function exportCharacters() {
+    const characters = JSON.parse(localStorage.getItem("characters") || "[]");
+    const dataStr = JSON.stringify(characters, null, 2);
+    const dataBlob = new Blob([dataStr], { type: "application/json" });
+    
+    const url = URL.createObjectURL(dataBlob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `personagens_${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   }
   
-  body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f5f5f5;
+  // Função para importar personagens
+  function importCharacters(file) {
+    const reader = new FileReader();
+    
+    reader.onload = function(e) {
+      try {
+        const importedChars = JSON.parse(e.target.result);
+        const existingChars = JSON.parse(localStorage.getItem("characters") || "[]");
+        
+        // Validação básica da estrutura
+        if (!Array.isArray(importedChars) || !importedChars.every(c => c.nome && c.imagem)) {
+          throw new Error("Formato de arquivo inválido");
+        }
+        
+        // Mescla os personagens (substitui duplicados pelo nome)
+        const mergedChars = [...existingChars];
+        importedChars.forEach(newChar => {
+          const index = mergedChars.findIndex(c => c.nome === newChar.nome);
+          if (index > -1) {
+            mergedChars[index] = newChar; // Substitui existente
+          } else {
+            mergedChars.push(newChar); // Adiciona novo
+          }
+        });
+        
+        localStorage.setItem("characters", JSON.stringify(mergedChars));
+        alert(`Sucesso! ${importedChars.length} personagens importados.`);
+        window.location.reload();
+      } catch (error) {
+        alert("Erro na importação: " + error.message);
+      }
+    };
+    
+    reader.readAsText(file);
   }
   
-  /* Cabeçalho */
-  header {
-    background-color: #333;
-    color: #fff;
-    padding: 1em;
-  }
-  
-  header h1 {
-    margin: 0;
-  }
-  
-  nav {
-    margin-top: 0.5em;
-  }
-  
-  nav a.btn {
-    background-color: #007BFF;
-    color: #fff;
-    text-decoration: none;
-    padding: 0.5em 1em;
-    border-radius: 4px;
-  }
-  
-  nav a.btn:hover {
-    background-color: #0056b3;
-  }
-  
-  /* Conteúdo principal */
-  main {
-    padding: 1em;
-  }
-  
-  /* Formulários */
-  form fieldset {
-    border: 1px solid #ccc;
-    margin-bottom: 1em;
-    padding: 1em;
-    background-color: #fff;
-  }
-  
-  form legend {
-    font-weight: bold;
-    margin-bottom: 0.5em;
-  }
-  
-  form label {
-    display: block;
-    margin-bottom: 0.5em;
-  }
-  
-  form input[type="text"],
-  form input[type="number"],
-  form textarea {
-    width: 100%;
-    padding: 0.5em;
-    margin-bottom: 1em;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  /* Botões */
-  button.btn {
-    background-color: #28a745;
-    color: #fff;
-    border: none;
-    padding: 0.7em 1.2em;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  button.btn:hover {
-    background-color: #218838;
-  }
-  
-  /* Cards de personagem (index.html) */
-  .character-card {
-    background-color: #fff;
-    border: 1px solid #ccc;
-    padding: 1em;
-    margin-bottom: 1em;
-    border-radius: 4px;
-    text-align: center;
-  }
-  
-  /* Imagens dos personagens */
-  .character-image {
-    width: 100%;
-    max-width: 150px;
-    height: auto;
-    border-radius: 4px;
-    object-fit: cover;
-    aspect-ratio: 1/1;
-  }
-  
-  .character-image-large {
-    width: 300px;
-    height: auto;
-    display: block;
-    margin: 0 auto;
-  }
-  
-  /* Grades para os formulários */
-  .grid-2x2 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1em;
-  }
-  
-  .grid-4x3 {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1em;
-  }
-  
-  /* Lista de personagens em grade */
-#character-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 1rem;
-    padding: 1rem 0;
-  }
-  
-  .character-card {
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 1rem;
-    transition: transform 0.2s;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .character-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  }
-  
-  .character-card h3 {
-    margin: 0.5rem 0 0;
-    font-size: 1.1rem;
-    color: #333;
-  }
+  // Adicione no evento DOMContentLoaded (no final do listener principal)
+  document.getElementById("export-characters")?.addEventListener("click", exportCharacters);
+  document.getElementById("import-characters")?.addEventListener("click", () => {
+    document.getElementById("file-input").click();
+  });
+  document.getElementById("file-input").addEventListener("change", (e) => {
+    if (e.target.files[0]) {
+      if (confirm("Isso substituirá personagens com nomes iguais. Continuar?")) {
+        importCharacters(e.target.files[0]);
+      }
+    }
+  });
