@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Criar Personagem</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Criar Personagem</h1>
+    <nav>
+      <a href="index.html" class="btn">Voltar</a>
+    </nav>
+  </header>
+  <main>
+    <form id="create-character-form">
+      <!-- Dados Básicos -->
+      <fieldset>
+        <legend>Dados Básicos</legend>
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="nome" required>
+        
+        <label for="imagem">URL da Imagem:</label>
+        <input type="text" id="imagem" name="imagem" placeholder="https://exemplo.com/imagem.jpg" required>
+      </fieldset>
+
+      <!-- Estilos (Grade 2x2) -->
+      <fieldset>
+        <legend>Estilos</legend>
+        <div class="grid-2x2">
+          <div>
+            <label for="poderoso">Poderoso:</label>
+            <input type="number" id="poderoso" name="poderoso" value="0" required>
+          </div>
+          <div>
+            <label for="ligeiro">Ligeiro:</label>
+            <input type="number" id="ligeiro" name="ligeiro" value="0" required>
+          </div>
+          <div>
+            <label for="preciso">Preciso:</label>
+            <input type="number" id="preciso" name="preciso" value="0" required>
+          </div>
+          <div>
+            <label for="capcioso">Capcioso:</label>
+            <input type="number" id="capcioso" name="capcioso" value="0" required>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- Habilidades (Grade 4x3) -->
+      <fieldset>
+        <legend>Habilidades</legend>
+        <div class="grid-4x3">
+          <div>
+            <label for="agarrao">Agarrão:</label>
+            <input type="number" id="agarrao" name="agarrao" value="0">
+          </div>
+          <div>
+            <label for="armazenamento">Armazenamento:</label>
+            <input type="number" id="armazenamento" name="armazenamento" value="0">
+          </div>
+          <div>
+            <label for="assegurar">Assegurar:</label>
+            <input type="number" id="assegurar" name="assegurar" value="0">
+          </div>
+          <div>
+            <label for="busca">Busca:</label>
+            <input type="number" id="busca" name="busca" value="0">
+          </div>
+          <div>
+            <label for="chamado">Chamado:</label>
+            <input type="number" id="chamado" name="chamado" value="0">
+          </div>
+          <div>
+            <label for="cura">Cura:</label>
+            <input type="number" id="cura" name="cura" value="0">
+          </div>
+          <div>
+            <label for="exibicao">Exibição:</label>
+            <input type="number" id="exibicao" name="exibicao" value="0">
+          </div>
+          <div>
+            <label for="golpe">Golpe:</label>
+            <input type="number" id="golpe" name="golpe" value="0">
+          </div>
+          <div>
+            <label for="manufatura">Manufatura:</label>
+            <input type="number" id="manufatura" name="manufatura" value="0">
+          </div>
+          <div>
+            <label for="estudo">Estudo:</label>
+            <input type="number" id="estudo" name="estudo" value="0">
+          </div>
+          <div>
+            <label for="tiro">Tiro:</label>
+            <input type="number" id="tiro" name="tiro" value="0">
+          </div>
+          <div>
+            <label for="travessia">Travessia:</label>
+            <input type="number" id="travessia" name="travessia" value="0">
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- Traços -->
+      <fieldset>
+        <legend>Traços</legend>
+        <label for="tracos">Traços:</label>
+        <textarea id="tracos" name="tracos" rows="4" placeholder="Descreva os traços do personagem"></textarea>
+      </fieldset>
+
+      <!-- Utensílio -->
+      <fieldset>
+        <legend>Utensílio</legend>
+        <label for="nomeUtensilio">Nome do Utensílio:</label>
+        <input type="text" id="nomeUtensilio" name="nomeUtensilio" required>
+
+        <label for="resistencia">Resistência do Utensílio:</label>
+        <input type="number" id="resistencia" name="resistencia" value="0">
+
+        <label for="descricaoUtensilio">Descrição do Utensílio:</label>
+        <textarea id="descricaoUtensilio" name="descricaoUtensilio" rows="2" placeholder="Descreva o utensílio"></textarea>
+      </fieldset>
+
+      <button type="submit" class="btn">Salvar Personagem</button>
+    </form>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>
