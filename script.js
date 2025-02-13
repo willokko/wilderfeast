@@ -229,211 +229,87 @@ if (editForm) {
      } else {
        const character = characters[index];
        
-       // Função para criar os cards de estatísticas
-       const createStats = (stats) => {
-         return Object.entries(stats).map(([key, value]) => `
-           <div class="stat-item">
-             <div class="stat-label">${key}</div>
-             <div class="stat-value">${value}</div>
-           </div>
-         `).join('');
-       };
-   
-       // Template HTML com o novo design
+       // Template HTML para a página de visualização
        const detailsHTML = `
-        <div id="character-details">
-          <!-- Cabeçalho Compacto -->
-          <div class="compact-header">
-            <img src="${character.imagem}" alt="${character.nome}" class="compact-image">
-            <h2 class="compact-name">${character.nome}</h2>
-          </div>
+         <div id="character-details">
+           <!-- Cabeçalho Compacto -->
+           <div class="compact-header">
+             <img src="${character.imagem}" alt="${character.nome}" class="compact-image">
+             <h2 class="compact-name">${character.nome}</h2>
+           </div>
 
-          <!-- Colunas Principais -->
-          <div class="main-columns">
-            <!-- Estilos -->
-            <div class="column">
-              <h3 class="column-title">🏋️ Estilos</h3>
-              <div class="styles-grid">
-                ${Object.entries(character.estilos).map(([key, value]) => `
-                  <div class="style-item">
-                    <span class="style-label">${key}</span>
-                    <span class="style-value">${value}</span>
-                  </div>
-                `).join('')}
-              </div>
-            </div>
+           <!-- Grid principal -->
+           <div class="main-columns">
+             <!-- Estilos (1/6) -->
+             <div class="column small-column">
+               <h3 class="column-title">🏋️ Estilos</h3>
+               <div class="styles-grid">
+                 ${Object.entries(character.estilos).map(([key, value]) => `
+                   <div class="style-item">
+                     <span class="style-label">${key}</span>
+                     <span class="style-value">${value}</span>
+                   </div>
+                 `).join('')}
+               </div>
+             </div>
 
-            <!-- Habilidades -->
-            <div class="column">
-              <h3 class="column-title">⚡ Habilidades</h3>
-              <div class="skills-grid">
-                ${Object.entries(character.habilidades).map(([key, value]) => `
-                  <div class="skill-item">
-                    <span class="skill-label">${key}</span>
-                    <span class="skill-value">${value}</span>
-                  </div>
-                `).join('')}
-              </div>
-            </div>
+             <!-- Habilidades (1/6) -->
+             <div class="column small-column">
+               <h3 class="column-title">⚡ Habilidades</h3>
+               <div class="skills-grid">
+                 ${Object.entries(character.habilidades).map(([key, value]) => `
+                   <div class="skill-item">
+                     <span class="skill-label">${key}</span>
+                     <span class="skill-value">${value}</span>
+                   </div>
+                 `).join('')}
+               </div>
+             </div>
 
-            <!-- Utensílio -->
-            <div class="column">
-              <h3 class="column-title">🔧 Utensílio</h3>
-              <div class="tool-info">
-                <p><strong>Nome:</strong> ${character.utensilio.nome}</p>
-                <p><strong>Resistência:</strong> ${character.utensilio.resistencia}</p>
-                <p><strong>Descrição:</strong> ${character.utensilio.descricao}</p>
-              </div>
-            </div>
-          </div>
+             <!-- Utensílio (2/6) -->
+             <div class="column large-column">
+               <h3 class="column-title">🔧 Utensílio</h3>
+               <div class="tool-info">
+                 <p><strong>Nome:</strong> ${character.utensilio.nome}</p>
+                 <p><strong>Resistência:</strong> ${character.utensilio.resistencia}</p>
+                 <p><strong>Descrição:</strong> ${character.utensilio.descricao}</p>
+               </div>
+             </div>
 
-          <!-- Linha de Traços -->
-          <div class="traits-section">
-            <h3 class="traits-title">🎭 Traços</h3>
-            <div class="traits-content">${character.tracos}</div>
-          </div>
-        </div>
+             <!-- Traços (2/6) -->
+             <div class="column large-column">
+               <h3 class="column-title">🎭 Traços</h3>
+               <div class="traits-content">${character.tracos}</div>
+             </div>
+           </div>
+         </div>
        `;
-       
+
        characterDetailsContainer.innerHTML = detailsHTML;
      }
    }
-   
-   // Configura o botão de edição
-   const editButton = document.getElementById("edit-button");
-   if (editButton) {
-     const index = getQueryParam("index");
-     editButton.href = `edit.html?index=${index}`;
-   }
 
-// Função para exportar personagens
-function exportCharacters() {
-const characters = JSON.parse(localStorage.getItem("characters") || "[]");
-const dataStr = JSON.stringify(characters, null, 2);
-const dataBlob = new Blob([dataStr], { type: "application/json" });
+  // Sistema de abas
+  const tabButtons = document.querySelectorAll('.tab-button');
+  const tabContents = document.querySelectorAll('.tab-content');
 
-const url = URL.createObjectURL(dataBlob);
-const a = document.createElement("a");
-a.href = url;
-a.download = `personagens_${new Date().toISOString().split('T')[0]}.json`;
-document.body.appendChild(a);
-a.click();
-document.body.removeChild(a);
-URL.revokeObjectURL(url);
-}
+  if (tabButtons.length > 0) {
+    tabButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        // Remove a classe active de todas as abas e conteúdos
+        tabButtons.forEach(btn => btn.classList.remove('active'));
+        tabContents.forEach(content => content.classList.remove('active'));
 
-// Função para importar personagens
-function importCharacters(file) {
-const reader = new FileReader();
+        // Adiciona a classe active na aba clicada
+        button.classList.add('active');
 
-reader.onload = function(e) {
-  try {
-    const importedChars = JSON.parse(e.target.result);
-    const existingChars = JSON.parse(localStorage.getItem("characters") || "[]");
-    
-    // Validação básica da estrutura
-    if (!Array.isArray(importedChars) || !importedChars.every(c => c.nome && c.imagem)) {
-      throw new Error("Formato de arquivo inválido");
-    }
-    
-    // Mescla os personagens (substitui duplicados pelo nome)
-    const mergedChars = [...existingChars];
-    importedChars.forEach(newChar => {
-      const index = mergedChars.findIndex(c => c.nome === newChar.nome);
-      if (index > -1) {
-        mergedChars[index] = newChar; // Substitui existente
-      } else {
-        mergedChars.push(newChar); // Adiciona novo
-      }
-    });
-    
-    localStorage.setItem("characters", JSON.stringify(mergedChars));
-    alert(`Sucesso! ${importedChars.length} personagens importados.`);
-    window.location.reload();
-  } catch (error) {
-    alert("Erro na importação: " + error.message);
-  }
-};
-
-reader.readAsText(file);
-}
-
-// Adicione no evento DOMContentLoaded (no final do listener principal)
-document.getElementById("export-characters")?.addEventListener("click", exportCharacters);
-document.getElementById("import-characters")?.addEventListener("click", () => {
-document.getElementById("file-input").click();
-});
-document.getElementById("file-input").addEventListener("change", (e) => {
-if (e.target.files[0]) {
-  if (confirm("Isso substituirá personagens com nomes iguais. Continuar?")) {
-    importCharacters(e.target.files[0]);
-  }
-}
-});
-
-// Função para exportar personagens
-function exportCharacters() {
-  const characters = JSON.parse(localStorage.getItem("characters") || "[]");
-  const dataStr = JSON.stringify(characters, null, 2);
-  const dataBlob = new Blob([dataStr], { type: "application/json" });
-  
-  const url = URL.createObjectURL(dataBlob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `personagens_${new Date().toISOString().split('T')[0]}.json`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
-
-// Função para importar personagens
-function importCharacters(file) {
-  const reader = new FileReader();
-  
-  reader.onload = function(e) {
-    try {
-      const importedChars = JSON.parse(e.target.result);
-      const existingChars = JSON.parse(localStorage.getItem("characters") || "[]");
-      
-      // Validação básica da estrutura
-      if (!Array.isArray(importedChars) || !importedChars.every(c => c.nome && c.imagem)) {
-        throw new Error("Formato de arquivo inválido");
-      }
-      
-      // Mescla os personagens (substitui duplicados pelo nome)
-      const mergedChars = [...existingChars];
-      importedChars.forEach(newChar => {
-        const index = mergedChars.findIndex(c => c.nome === newChar.nome);
-        if (index > -1) {
-          mergedChars[index] = newChar; // Substitui existente
-        } else {
-          mergedChars.push(newChar); // Adiciona novo
+        // Mostra o conteúdo correspondente
+        const targetId = button.getAttribute('data-tab');
+        const targetContent = document.getElementById(`${targetId}-section`);
+        if (targetContent) {
+          targetContent.classList.add('active');
         }
       });
-      
-      localStorage.setItem("characters", JSON.stringify(mergedChars));
-      alert(`Sucesso! ${importedChars.length} personagens importados.`);
-      window.location.reload();
-    } catch (error) {
-      alert("Erro na importação: " + error.message);
-    }
-  };
-  
-  reader.readAsText(file);
-}
-
-// Adicione no evento DOMContentLoaded (no final do listener principal)
-document.getElementById("export-characters")?.addEventListener("click", exportCharacters);
-document.getElementById("import-characters")?.addEventListener("click", () => {
-  document.getElementById("file-input").click();
-});
-
-document.getElementById("file-input").addEventListener("change", (e) => {
-  if (e.target.files[0]) {
-    if (confirm("Isso substituirá personagens com nomes iguais. Continuar?")) {
-      importCharacters(e.target.files[0]);
-    }
+    });
   }
-});
 });
