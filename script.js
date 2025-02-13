@@ -219,100 +219,103 @@ if (editForm) {
 /* ====================
    Página de Visualização (view.html)
    ==================== */
-   const characterDetailsContainer = document.getElementById("character-details");
-   if (characterDetailsContainer) {
-     const index = getQueryParam("index");
-     const characters = JSON.parse(localStorage.getItem("characters") || "[]");
-   
-     // Adiciona event listeners para os botões
-     const editButton = document.getElementById("edit-button");
-     const exportButton = document.getElementById("export-button");
-     
-     if (editButton) {
-       editButton.addEventListener("click", function() {
-         window.location.href = `edit.html?index=${index}`;
-       });
-     }
+const characterDetailsContainer = document.getElementById("character-details");
+if (characterDetailsContainer) {
+  const index = getQueryParam("index");
+  const characters = JSON.parse(localStorage.getItem("characters") || "[]");
 
-     if (exportButton && index !== null) {
-       exportButton.addEventListener("click", function() {
-         const character = characters[index];
-         const blob = new Blob([JSON.stringify(character, null, 2)], { type: "application/json" });
-         const url = URL.createObjectURL(blob);
-         const a = document.createElement("a");
-         a.href = url;
-         a.download = `${character.nome}.json`;
-         document.body.appendChild(a);
-         a.click();
-         document.body.removeChild(a);
-         URL.revokeObjectURL(url);
-       });
-     }
+  if (index === null || isNaN(index) || index < 0 || index >= characters.length) {
+    characterDetailsContainer.innerHTML = "<p>Personagem não encontrado.</p>";
+  } else {
+    const character = characters[index];
+    
+    // Template HTML para a página de visualização
+    const detailsHTML = `
+      <!-- Cabeçalho Compacto -->
+      <div class="compact-header">
+        <img src="${character.imagem}" alt="${character.nome}" class="compact-image">
+        <h2 class="compact-name">${character.nome}</h2>
+      </div>
 
-     if (index === null || isNaN(index) || index < 0 || index >= characters.length) {
-       characterDetailsContainer.innerHTML = "<p>Personagem não encontrado.</p>";
-     } else {
-       const character = characters[index];
-       
-       // Template HTML para a página de visualização
-       const detailsHTML = `
-         <div id="character-details">
-           <!-- Cabeçalho Compacto -->
-           <div class="compact-header">
-             <img src="${character.imagem}" alt="${character.nome}" class="compact-image">
-             <h2 class="compact-name">${character.nome}</h2>
-           </div>
+      <!-- Grid principal -->
+      <div class="main-columns">
+        <!-- Estilos (1/6) -->
+        <div class="column small-column">
+          <h3 class="column-title">🏋️ Estilos</h3>
+          <div class="styles-grid">
+            ${Object.entries(character.estilos).map(([key, value]) => 
+              `<div class="style-item">
+                <span class="style-label">${key}</span>
+                <span class="style-value" onclick="rolarDados('${key}', ${value})">${value}</span>
+              </div>`
+            ).join('')}
+          </div>
+        </div>
 
-           <!-- Grid principal -->
-           <div class="main-columns">
-             <!-- Estilos (1/6) -->
-             <div class="column small-column">
-               <h3 class="column-title">🏋️ Estilos</h3>
-               <div class="styles-grid">
-                 ${Object.entries(character.estilos).map(([key, value]) => `
-                   <div class="style-item">
-                     <span class="style-label">${key}</span>
-                     <span class="style-value">${value}</span>
-                   </div>
-                 `).join('')}
-               </div>
-             </div>
+        <!-- Habilidades (1/6) -->
+        <div class="column small-column">
+          <h3 class="column-title">⚡ Habilidades</h3>
+          <div class="skills-grid">
+            ${Object.entries(character.habilidades).map(([key, value]) => 
+              `<div class="skill-item">
+                <span class="skill-label">${key}</span>
+                <span class="skill-value">${value}</span>
+              </div>`
+            ).join('')}
+          </div>
+        </div>
 
-             <!-- Habilidades (1/6) -->
-             <div class="column small-column">
-               <h3 class="column-title">⚡ Habilidades</h3>
-               <div class="skills-grid">
-                 ${Object.entries(character.habilidades).map(([key, value]) => `
-                   <div class="skill-item">
-                     <span class="skill-label">${key}</span>
-                     <span class="skill-value">${value}</span>
-                   </div>
-                 `).join('')}
-               </div>
-             </div>
+        <!-- Utensílio (2/6) -->
+        <div class="column large-column">
+          <h3 class="column-title">🔧 Utensílio</h3>
+          <div class="tool-info">
+            <p><strong>Nome:</strong> ${character.utensilio.nome}</p>
+            <p><strong>Resistência:</strong> ${character.utensilio.resistencia}</p>
+            <p><strong>Descrição:</strong> ${character.utensilio.descricao}</p>
+          </div>
+        </div>
 
-             <!-- Utensílio (2/6) -->
-             <div class="column large-column">
-               <h3 class="column-title">🔧 Utensílio</h3>
-               <div class="tool-info">
-                 <p><strong>Nome:</strong> ${character.utensilio.nome}</p>
-                 <p><strong>Resistência:</strong> ${character.utensilio.resistencia}</p>
-                 <p><strong>Descrição:</strong> ${character.utensilio.descricao}</p>
-               </div>
-             </div>
+        <!-- Traços (2/6) -->
+        <div class="column large-column">
+          <h3 class="column-title">🎭 Traços</h3>
+          <div class="traits-content">${character.tracos}</div>
+        </div>
+      </div>
+    `;
 
-             <!-- Traços (2/6) -->
-             <div class="column large-column">
-               <h3 class="column-title">🎭 Traços</h3>
-               <div class="traits-content">${character.tracos}</div>
-             </div>
-           </div>
-         </div>
-       `;
+    characterDetailsContainer.innerHTML = detailsHTML;
+  }
+}
 
-       characterDetailsContainer.innerHTML = detailsHTML;
-     }
-   }
+// Função para rolar dados (deve estar no escopo global)
+window.rolarDados = function(estilo, quantidade) {
+  // Gera os resultados dos dados
+  const resultados = [];
+  let total = 0;
+  
+  for (let i = 0; i < quantidade; i++) {
+    const resultado = Math.floor(Math.random() * 6) + 1;
+    resultados.push(resultado);
+    total += resultado;
+  }
+
+  // Prepara o HTML para exibição
+  const resultadoDiv = document.getElementById('resultado-dados');
+  resultadoDiv.innerHTML = `
+    <h4>${estilo} (${quantidade}d6)</h4>
+    <div class="dados">
+      ${resultados.map(r => `<span class="dado">${r}</span>`).join('')}
+    </div>
+    <div class="resultado-total">
+      Total: ${total}
+    </div>
+  `;
+  
+  // Mostra o resultado com animação
+  resultadoDiv.classList.remove('active');
+  void resultadoDiv.offsetWidth; // Força um reflow para reiniciar a animação
+  resultadoDiv.classList.add('active');
+};
 
   // Sistema de abas
   const tabButtons = document.querySelectorAll('.tab-button');
