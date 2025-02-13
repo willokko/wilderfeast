@@ -425,11 +425,11 @@ form textarea:focus {
   margin-bottom: -1px;
 }
 
-/* Estilo base para os botões das abas */
+/* Estilo das abas */
 .tab-button {
   padding: 0.8rem 2rem;
   border: 1px solid #404040;
-  background: #2d2d2d;
+  background: #1a1a1a; /* Cor padrão para abas inativas */
   color: #cccccc;
   cursor: pointer;
   border-radius: 8px 8px 0 0;
@@ -438,9 +438,9 @@ form textarea:focus {
 }
 
 .tab-button.active {
-  background: #1a1a1a;
+  background: #2d2d2d; /* Cor da aba ativa igual ao container */
   color: #ffffff;
-  border-bottom-color: #1a1a1a;
+  border-bottom-color: #2d2d2d; /* Mesma cor do background para criar continuidade */
   z-index: 2;
 }
 
@@ -449,6 +449,7 @@ form textarea:focus {
   padding: 1rem;
   border: 1px solid #404040;
   border-radius: 0 0 8px 8px;
+  background: #2d2d2d; /* Cor do container */
 }
 
 .tab-content.active {
@@ -540,4 +541,55 @@ form textarea:focus {
   100% {
     transform: rotateZ(360deg);
   }
+}
+
+/* Estilos para os dados */
+.roll-options {
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  background: #2d2d2d;
+  border-radius: 4px;
+}
+
+.soltar-bicho {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #fff;
+  cursor: pointer;
+}
+
+.dados {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin: 1rem 0;
+}
+
+.dado {
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  font-weight: bold;
+  color: white;
+}
+
+.dado-d6 {
+  background-color: #007BFF;
+}
+
+.dado-d8 {
+  background-color: #ff8c00;
+}
+
+.dado-d20 {
+  background-color: #dc3545;
+}
+
+/* Animação existente */
+.dados-resultado.active {
+  animation: fadeInUp 0.3s ease;
 }

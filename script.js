@@ -287,24 +287,55 @@ if (characterDetailsContainer) {
   }
 }
 
-// Função para rolar dados (deve estar no escopo global)
+// Primeiro, vamos modificar o HTML do container de resultado
+const resultadoDiv = document.getElementById('resultado-dados');
+if (resultadoDiv) {
+  resultadoDiv.innerHTML = `
+    <div class="roll-options">
+      <label class="soltar-bicho">
+        <input type="checkbox" id="soltarBicho"> Soltar o Bicho
+      </label>
+    </div>
+    <div class="roll-results"></div>
+  `;
+}
+
+// Função para rolar dados atualizada
 window.rolarDados = function(estilo, quantidade) {
-  // Gera os resultados dos dados
+  const soltarBicho = document.getElementById('soltarBicho').checked;
+  const resultadoDiv = document.getElementById('resultado-dados');
+  const resultArea = resultadoDiv.querySelector('.roll-results');
+  
+  // Gera os resultados dos d6
   const resultados = [];
   let total = 0;
   
-  for (let i = 0; i < quantidade; i++) {
+  // Se "Soltar o Bicho" estiver marcado, remove 1 d6
+  const qtdD6 = soltarBicho ? Math.max(0, quantidade - 1) : quantidade;
+  
+  // Rola os d6
+  for (let i = 0; i < qtdD6; i++) {
     const resultado = Math.floor(Math.random() * 6) + 1;
-    resultados.push(resultado);
+    resultados.push({ valor: resultado, tipo: 'd6' });
     total += resultado;
   }
+  
+  // Rola o dado extra (d8 ou d20)
+  const dadoExtra = soltarBicho ? 
+    { valor: Math.floor(Math.random() * 20) + 1, tipo: 'd20' } :
+    { valor: Math.floor(Math.random() * 8) + 1, tipo: 'd8' };
+  
+  resultados.push(dadoExtra);
+  total += dadoExtra.valor;
 
   // Prepara o HTML para exibição
-  const resultadoDiv = document.getElementById('resultado-dados');
-  resultadoDiv.innerHTML = `
-    <h4>${estilo} (${quantidade}d6)</h4>
+  resultArea.innerHTML = `
+    <h4>${estilo} (${qtdD6}d6 + 1${dadoExtra.tipo})</h4>
     <div class="dados">
-      ${resultados.map(r => `<span class="dado">${r}</span>`).join('')}
+      ${resultados.map(r => `
+        <span class="dado ${r.tipo === 'd6' ? 'dado-d6' : 
+          (r.tipo === 'd8' ? 'dado-d8' : 'dado-d20')}">${r.valor}</span>
+      `).join('')}
     </div>
     <div class="resultado-total">
       Total: ${total}
