@@ -192,46 +192,96 @@ if (editForm) {
   });
 }
 
-  /* ====================
-     Página de Visualização (view.html)
-     ==================== */
+/* ====================
+   Página de Visualização (view.html)
+   ==================== */
+   const characterDetailsContainer = document.getElementById("character-details");
+   if (characterDetailsContainer) {
+     const index = getQueryParam("index");
+     const characters = JSON.parse(localStorage.getItem("characters") || "[]");
+   
+     if (index === null || isNaN(index) || index < 0 || index >= characters.length) {
+       characterDetailsContainer.innerHTML = "<p>Personagem não encontrado.</p>";
+     } else {
+       const character = characters[index];
+       
+       // Função para criar os cards de estatísticas
+       const createStats = (stats) => {
+         return Object.entries(stats).map(([key, value]) => `
+           <div class="stat-item">
+             <div class="stat-label">${key}</div>
+             <div class="stat-value">${value}</div>
+           </div>
+         `).join('');
+       };
+   
+       // Template HTML com o novo design
+       const detailsHTML = `
+        <div id="character-details">
+          <!-- Cabeçalho Compacto -->
+          <div class="compact-header">
+            <img src="${character.imagem}" alt="${character.nome}" class="compact-image">
+            <h2 class="compact-name">${character.nome}</h2>
+          </div>
 
-  const editButton = document.getElementById("edit-button");
-  if (editButton) {
-    const index = getQueryParam("index");
-    editButton.href = `edit.html?index=${index}`;
-  }
+          <!-- Colunas Principais -->
+          <div class="main-columns">
+            <!-- Estilos -->
+            <div class="column">
+              <h3 class="column-title">🏋️ Estilos</h3>
+              <div class="styles-grid">
+                ${Object.entries(character.estilos).map(([key, value]) => `
+                  <div class="style-item">
+                    <span class="style-label">${key}</span>
+                    <span class="style-value">${value}</span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
 
-  const characterDetailsContainer = document.getElementById("character-details");
-  if (characterDetailsContainer) {
-    const index = getQueryParam("index");
-    const characters = JSON.parse(localStorage.getItem("characters") || "[]");
+            <!-- Habilidades -->
+            <div class="column">
+              <h3 class="column-title">⚡ Habilidades</h3>
+              <div class="skills-grid">
+                ${Object.entries(character.habilidades).map(([key, value]) => `
+                  <div class="skill-item">
+                    <span class="skill-label">${key}</span>
+                    <span class="skill-value">${value}</span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
 
-    if (index === null || isNaN(index) || index < 0 || index >= characters.length) {
-      characterDetailsContainer.innerHTML = "<p>Personagem não encontrado.</p>";
-    } else {
-      const character = characters[index];
-      const detailsHTML = `
-        <h2>${character.nome}</h2>
-        <img src="${character.imagem}" alt="${character.nome}" class="character-image-large">
-        <h3>Estilos</h3>
-        <p>Poderoso: ${character.estilos.poderoso}, Ligeiro: ${character.estilos.ligeiro}, Preciso: ${character.estilos.preciso}, Capcioso: ${character.estilos.capcioso}</p>
-        <h3>Habilidades</h3>
-        <p>
-          Agarrão: ${character.habilidades.agarrao}, Armazenamento: ${character.habilidades.armazenamento}, Assegurar: ${character.habilidades.assegurar}, Busca: ${character.habilidades.busca}<br>
-          Chamado: ${character.habilidades.chamado}, Cura: ${character.habilidades.cura}, Exibição: ${character.habilidades.exibicao}, Golpe: ${character.habilidades.golpe}<br>
-          Manufatura: ${character.habilidades.manufatura}, Estudo: ${character.habilidades.estudo}, Tiro: ${character.habilidades.tiro}, Travessia: ${character.habilidades.travessia}
-        </p>
-        <h3>Traços</h3>
-        <p>${character.tracos}</p>
-        <h3>Utensílio</h3>
-        <p>Nome: ${character.utensilio.nome}, Resistência: ${character.utensilio.resistencia}<br>
-        Descrição: ${character.utensilio.descricao}</p>
-      `;
-      characterDetailsContainer.innerHTML = detailsHTML;
-    }
-  }
-});
+            <!-- Utensílio -->
+            <div class="column">
+              <h3 class="column-title">🔧 Utensílio</h3>
+              <div class="tool-info">
+                <p><strong>Nome:</strong> ${character.utensilio.nome}</p>
+                <p><strong>Resistência:</strong> ${character.utensilio.resistencia}</p>
+                <p><strong>Descrição:</strong> ${character.utensilio.descricao}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Linha de Traços -->
+          <div class="traits-section">
+            <h3 class="traits-title">🎭 Traços</h3>
+            <div class="traits-content">${character.tracos}</div>
+          </div>
+        </div>
+       `;
+       
+       characterDetailsContainer.innerHTML = detailsHTML;
+     }
+   }
+   
+   // Configura o botão de edição
+   const editButton = document.getElementById("edit-button");
+   if (editButton) {
+     const index = getQueryParam("index");
+     editButton.href = `edit.html?index=${index}`;
+   }
+
 // Função para exportar personagens
 function exportCharacters() {
 const characters = JSON.parse(localStorage.getItem("characters") || "[]");
@@ -354,10 +404,12 @@ document.getElementById("export-characters")?.addEventListener("click", exportCh
 document.getElementById("import-characters")?.addEventListener("click", () => {
   document.getElementById("file-input").click();
 });
+
 document.getElementById("file-input").addEventListener("change", (e) => {
   if (e.target.files[0]) {
     if (confirm("Isso substituirá personagens com nomes iguais. Continuar?")) {
       importCharacters(e.target.files[0]);
     }
   }
+});
 });

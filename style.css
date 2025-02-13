@@ -7,32 +7,37 @@ body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #f5f5f5;
+  background-color: #1a1a1a;
+  color: #e0e0e0;
 }
 
 /* Cabeçalho */
 header {
-  background-color: #333;
-  color: #fff;
+  background-color: #2d2d2d;
+  color: #ffffff;
   padding: 1em;
+  border-bottom: 1px solid #404040;
 }
 
 header h1 {
   margin: 0;
+  color: #ffffff;
 }
 
 nav {
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
+  margin-top: 1rem;
 }
 
 nav a.btn {
   background-color: #007BFF;
-  color: #fff;
+  color: #ffffff;
   text-decoration: none;
   padding: 0.5em 1em;
   border-radius: 4px;
+  transition: background-color 0.3s ease;
 }
 
 nav a.btn:hover {
@@ -46,20 +51,23 @@ main {
 
 /* Formulários */
 form fieldset {
-  border: 1px solid #ccc;
+  border: 1px solid #404040;
   margin-bottom: 1em;
   padding: 1em;
-  background-color: #fff;
+  background-color: #2d2d2d;
+  border-radius: 6px;
 }
 
 form legend {
   font-weight: bold;
   margin-bottom: 0.5em;
+  color: #ffffff;
 }
 
 form label {
   display: block;
   margin-bottom: 0.5em;
+  color: #cccccc;
 }
 
 form input[type="text"],
@@ -68,18 +76,29 @@ form textarea {
   width: 100%;
   padding: 0.5em;
   margin-bottom: 1em;
-  border: 1px solid #ccc;
+  border: 1px solid #404040;
   border-radius: 4px;
+  background-color: #333333;
+  color: #e0e0e0;
+  transition: border-color 0.3s ease;
+}
+
+form input[type="text"]:focus,
+form input[type="number"]:focus,
+form textarea:focus {
+  border-color: #007BFF;
+  outline: none;
 }
 
 /* Botões */
 button.btn {
   background-color: #28a745;
-  color: #fff;
+  color: #ffffff;
   border: none;
   padding: 0.7em 1.2em;
   border-radius: 4px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 button.btn:hover {
@@ -88,11 +107,11 @@ button.btn:hover {
 
 /* Cards de personagem (index.html) */
 .character-card {
-  background-color: #fff;
-  border: 1px solid #ddd;
+  background-color: #2d2d2d;
+  border: 1px solid #404040;
   border-radius: 8px;
   padding: 1rem;
-  transition: transform 0.2s;
+  transition: transform 0.2s, box-shadow 0.3s;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -107,13 +126,13 @@ button.btn:hover {
 
 .character-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 
 .character-card h3 {
   margin: 0.5rem 0 0;
   font-size: 1.1rem;
-  color: #333;
+  color: #ffffff;
 }
 
 /* Imagens dos personagens */
@@ -124,6 +143,7 @@ button.btn:hover {
   border-radius: 4px;
   object-fit: cover;
   aspect-ratio: 1/1;
+  border: 2px solid #404040;
 }
 
 .character-image-large {
@@ -131,6 +151,7 @@ button.btn:hover {
   height: auto;
   display: block;
   margin: 0 auto;
+  border: 2px solid #404040;
 }
 
 /* Grades para os formulários */
@@ -146,12 +167,22 @@ button.btn:hover {
   gap: 1em;
 }
 
+/* Botões especiais */
 .danger {
   background-color: #dc3545;
+  transition: background-color 0.3s ease;
 }
 
 .danger:hover {
   background-color: #c82333;
+}
+
+.secondary {
+  background-color: #6c757d;
+}
+
+.secondary:hover {
+  background-color: #5a6268;
 }
 
 .form-actions {
@@ -159,4 +190,134 @@ button.btn:hover {
   gap: 1rem;
   margin-top: 2rem;
   justify-content: flex-end;
+}
+
+/* Scrollbar personalizada */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #2d2d2d;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #404040;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #505050;
+}
+
+/* Adicione estas regras ao style.css */
+
+/* Página de Visualização */
+/* Estilos Gerais */
+
+#character-details {
+  max-width: 1200px;
+  margin: 1rem auto;
+  padding: -9rem;
+}
+
+.compact-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.compact-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #007BFF;
+}
+
+.compact-name {
+  margin: 0;
+  color: #ffffff;
+  font-size: 1.5rem;
+}
+
+.main-columns {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.column {
+  background-color: #2d2d2d;
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 3px solid #007BFF;
+}
+
+.column-title {
+  color: #007BFF;
+  margin: 0 0 1rem 0;
+  font-size: 1.2rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #404040;
+}
+
+/* Grids Internos */
+.styles-grid, .skills-grid {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.style-item, .skill-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  background-color: #333333;
+  border-radius: 4px;
+}
+
+.style-label, .skill-label {
+  color: #cccccc;
+  font-size: 0.9rem;
+}
+
+.style-value, .skill-value {
+  color: #ffffff;
+  font-weight: bold;
+  background-color: #007BFF;
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+}
+
+/* Seção de Traços */
+.traits-section {
+  background-color: #2d2d2d;
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 3px solid #007BFF;
+}
+
+.traits-title {
+  color: #007BFF;
+  margin: 0 0 1rem 0;
+  font-size: 1.2rem;
+}
+
+.traits-content {
+  color: #e0e0e0;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+/* Utensílio */
+.tool-info p {
+  margin: 0.5rem 0;
+  color: #e0e0e0;
+}
+
+.tool-info strong {
+  color: #007BFF;
 }
