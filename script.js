@@ -224,6 +224,31 @@ if (editForm) {
      const index = getQueryParam("index");
      const characters = JSON.parse(localStorage.getItem("characters") || "[]");
    
+     // Adiciona event listeners para os botões
+     const editButton = document.getElementById("edit-button");
+     const exportButton = document.getElementById("export-button");
+     
+     if (editButton) {
+       editButton.addEventListener("click", function() {
+         window.location.href = `edit.html?index=${index}`;
+       });
+     }
+
+     if (exportButton && index !== null) {
+       exportButton.addEventListener("click", function() {
+         const character = characters[index];
+         const blob = new Blob([JSON.stringify(character, null, 2)], { type: "application/json" });
+         const url = URL.createObjectURL(blob);
+         const a = document.createElement("a");
+         a.href = url;
+         a.download = `${character.nome}.json`;
+         document.body.appendChild(a);
+         a.click();
+         document.body.removeChild(a);
+         URL.revokeObjectURL(url);
+       });
+     }
+
      if (index === null || isNaN(index) || index < 0 || index >= characters.length) {
        characterDetailsContainer.innerHTML = "<p>Personagem não encontrado.</p>";
      } else {
@@ -310,6 +335,65 @@ if (editForm) {
           targetContent.classList.add('active');
         }
       });
+    });
+  }
+
+  /* ====================
+     Funcionalidades Globais de Importação/Exportação
+     ==================== */
+  // Exportar todos os personagens
+  const exportAllButton = document.getElementById("export-characters");
+  if (exportAllButton) {
+    exportAllButton.addEventListener("click", function() {
+      const characters = JSON.parse(localStorage.getItem("characters") || "[]");
+      const blob = new Blob([JSON.stringify(characters, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "todos-personagens.json";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+  }
+
+  // Importar personagens
+  const importButton = document.getElementById("import-characters");
+  const fileInput = document.getElementById("file-input");
+
+  if (importButton && fileInput) {
+    importButton.addEventListener("click", function() {
+      fileInput.click();
+    });
+    
+    fileInput.addEventListener("change", function(e) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      
+      reader.onload = function(e) {
+        try {
+          const importedData = JSON.parse(e.target.result);
+          
+          // Verifica se é um array (múltiplos personagens) ou objeto único
+          if (Array.isArray(importedData)) {
+            const characters = JSON.parse(localStorage.getItem("characters") || "[]");
+            characters.push(...importedData);
+            localStorage.setItem("characters", JSON.stringify(characters));
+          } else {
+            const characters = JSON.parse(localStorage.getItem("characters") || "[]");
+            characters.push(importedData);
+            localStorage.setItem("characters", JSON.stringify(characters));
+          }
+          
+          alert("Importação realizada com sucesso!");
+          window.location.reload();
+        } catch (error) {
+          alert("Erro ao importar arquivo. Verifique se o formato está correto.");
+        }
+      };
+      
+      reader.readAsText(file);
     });
   }
 });
