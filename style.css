@@ -124,6 +124,13 @@ button.btn:hover {
   padding: 1rem 0;
 }
 
+#monster-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  padding: 1rem 0;
+}
+
 .character-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 4px 12px rgba(0,0,0,0.3);
@@ -320,4 +327,29 @@ button.btn:hover {
 
 .tool-info strong {
   color: #007BFF;
+}
+
+/* Estilo para a seção de personagens */
+#characters-section {
+  background-color: #2d2d2d;
+  padding: 1rem;
+  margin-bottom: 2rem;
+  border-radius: 8px;
+  border-left: 4px solid #007BFF; /* Azul para personagens */
+}
+
+/* Estilo para a seção de monstros */
+#monsters-section {
+  background-color: #2d2d2d;
+  padding: 1rem;
+  margin-bottom: 2rem;
+  border-radius: 8px;
+  border-left: 4px solid #dc3545; /* Vermelho para monstros */
+}
+
+/* Estilo para os títulos das seções */
+#characters-section h2,
+#monsters-section h2 {
+  color: #ffffff;
+  margin-bottom: 1rem;
 }

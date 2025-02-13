@@ -6,40 +6,61 @@ document.addEventListener("DOMContentLoaded", function() {
     return params.get(param);
   }
 
+  // Seleciona as seções onde os cards serão exibidos
+  const charactersSection = document.getElementById("character-list");
+  const monstersSection = document.getElementById("monster-list");
+
+  // Recupera a lista de fichas (personagens e monstros) do localStorage
+  const characters = JSON.parse(localStorage.getItem("characters") || "[]");
+
   /* ====================
-     Página Inicial (index.html)
-     ==================== */
-  const characterListContainer = document.getElementById("character-list");
-  if (characterListContainer) {
-    const characters = JSON.parse(localStorage.getItem("characters") || "[]");
-    characterListContainer.innerHTML = "";
+      Página Inicial (index.html)
+      ==================== */
 
-    if (characters.length === 0) {
-      characterListContainer.innerHTML = "<p>Nenhum personagem criado.</p>";
-    } else {
-      characters.forEach(function(character, index) {
-        const card = document.createElement("div");
-        card.className = "character-card";
+  // Limpa as seções para evitar duplicações
+  if (charactersSection) charactersSection.innerHTML = "";
+  if (monstersSection) monstersSection.innerHTML = "";
 
-        // Cria um link que envolve a imagem para direcionar à página de visualização
-        const link = document.createElement("a");
-        link.href = "view.html?index=" + index;
-
-        const img = document.createElement("img");
-        img.src = character.imagem;
-        img.alt = character.nome;
-        img.className = "character-image";
-        link.appendChild(img);
-
-        const nameEl = document.createElement("h3");
-        nameEl.textContent = character.nome;
-
-        card.appendChild(link);
-        card.appendChild(nameEl);
-        characterListContainer.appendChild(card);
-      });
+  // Caso não haja nenhuma ficha cadastrada, exibe uma mensagem informativa
+  if (characters.length === 0) {
+    if (charactersSection) {
+      charactersSection.innerHTML = "<p>Nenhum personagem ou monstro criado.</p>";
     }
+  } else {
+    // Percorre cada ficha (personagem ou monstro)
+    characters.forEach((character, index) => {
+      // Cria o container do card
+      const card = document.createElement("div");
+      card.className = "character-card";
+
+      // Cria um link que direciona para a página de visualização (passando o index como parâmetro)
+      const link = document.createElement("a");
+      link.href = `view.html?index=${index}`;
+
+      // Cria e configura a imagem do card
+      const img = document.createElement("img");
+      img.src = character.imagem;
+      img.alt = character.nome;
+      img.className = "character-image";
+      link.appendChild(img);
+
+      // Cria e configura o elemento com o nome da ficha
+      const nameEl = document.createElement("h3");
+      nameEl.textContent = character.nome;
+
+      // Adiciona o link e o nome ao card
+      card.appendChild(link);
+      card.appendChild(nameEl);
+
+      // Verifica o tipo da ficha e adiciona o card na seção correspondente
+      if (character.tipo === "personagem") {
+        if (charactersSection) charactersSection.appendChild(card);
+      } else if (character.tipo === "monstro") {
+        if (monstersSection) monstersSection.appendChild(card);
+      }
+    });
   }
+
 
   /* ====================
      Página de Criação (create.html)
@@ -51,6 +72,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
       // Cria o objeto personagem com os valores do formulário (incluindo a imagem)
       const character = {
+        tipo: document.getElementById("tipo").value,
         nome: document.getElementById("nome").value,
         imagem: document.getElementById("imagem").value,
         estilos: {
@@ -105,6 +127,7 @@ if (editForm) {
 
   // Preenche o formulário com os dados existentes
   const character = characters[index];
+  document.getElementById("tipo").value = character.tipo;
   document.getElementById("nome").value = character.nome;
   document.getElementById("imagem").value = character.imagem;
 
@@ -142,6 +165,7 @@ if (editForm) {
 
     // Atualiza o objeto personagem
     const updatedCharacter = {
+      tipo: document.getElementById("tipo").value.trim(),
       nome: document.getElementById("nome").value.trim(),
       imagem: document.getElementById("imagem").value.trim(),
       estilos: {
