@@ -91,18 +91,74 @@ form textarea:focus {
 }
 
 /* Botões */
-button.btn {
-  background-color: #28a745;
-  color: #ffffff;
-  border: none;
-  padding: 0.7em 1.2em;
-  border-radius: 4px;
+.btn {
+  background-color: transparent;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  color: #e0e0e0;
+  font-family: "Inter var", ui-sans-serif, system-ui, -apple-system, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.5;
+  padding: 0.75rem 1.25rem;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-button.btn:hover {
-  background-color: #218838;
+.btn:hover,
+.btn:focus {
+  background-color: #e0e0e0;
+  color: #1a1a1a;
+  border-color: #e0e0e0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.btn:focus-visible {
+  outline: none;
+}
+
+.btn-primary {
+  border-color: #007BFF;
+  color: #007BFF;
+}
+
+.btn-primary:hover {
+  background-color: #007BFF;
+  color: #fff;
+}
+
+.btn-success {
+  border-color: #28a745;
+  color: #28a745;
+}
+
+.btn-success:hover {
+  background-color: #28a745;
+  color: #fff;
+}
+
+.btn-secondary {
+  border-color: #6c757d;
+  color: #6c757d;
+}
+
+.btn-secondary:hover {
+  background-color: #6c757d;
+  color: #fff;
+}
+
+.btn-danger {
+  border-color: #dc3545;
+  color: #dc3545;
+}
+
+.btn-danger:hover {
+  background-color: #dc3545;
+  color: #fff;
 }
 
 /* Cards de personagem (index.html) */
