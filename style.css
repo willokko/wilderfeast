@@ -377,9 +377,28 @@ form textarea:focus {
 }
 
 .traits-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.trait-item {
+  background: #363636;
+  border-radius: 6px;
+  padding: 1rem;
+  border-left: 3px solid #007BFF;
+}
+
+.trait-name {
+  color: #007BFF;
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+}
+
+.trait-description {
   color: #e0e0e0;
-  line-height: 1.5;
-  white-space: pre-wrap;
+  margin: 0;
+  line-height: 1.4;
 }
 
 /* Utensílio */
@@ -566,30 +585,116 @@ form textarea:focus {
   margin: 1rem 0;
 }
 
+/* Container específico para o dado especial (d8/d20) */
+.dado-especial {
+  margin-left: 0.8rem;
+}
+
 .dado {
-  width: 2rem;
-  height: 2rem;
+  width: 2.5rem;
+  height: 2.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
   font-weight: bold;
   color: white;
 }
 
 .dado-d6 {
   background-color: #007BFF;
+  border-radius: 4px;
+}
+
+/* Estilo para d8 e d20 (losango) */
+.dado-d8, .dado-d20 {
+  background-color: transparent;
+  position: relative;
+}
+
+/* Cria o losango usando pseudo-elemento */
+.dado-d8::before, .dado-d20::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transform: rotate(45deg);
+  border: 2px solid;
+  box-sizing: border-box;
 }
 
 .dado-d8 {
-  background-color: #ff8c00;
+  color: #ff8c00;
+}
+
+.dado-d8::before {
+  border-color: #ff8c00;
 }
 
 .dado-d20 {
-  background-color: #dc3545;
+  color: #dc3545;
+}
+
+.dado-d20::before {
+  border-color: #dc3545;
 }
 
 /* Animação existente */
 .dados-resultado.active {
   animation: fadeInUp 0.3s ease;
+}
+
+/* Estilos para os traços */
+.trait-item {
+  background: #363636;
+  border-radius: 6px;
+  padding: 0.8rem;
+  margin-bottom: 0.8rem;
+}
+
+.trait-name {
+  color: #007BFF;
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+}
+
+.trait-description {
+  color: #e0e0e0;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Estilos para o formulário de adição de traços */
+.tracos-container {
+  margin-bottom: 1rem;
+}
+
+.traco-item {
+  background: #2d2d2d;
+  padding: 1rem;
+  border-radius: 6px;
+  margin-bottom: 0.8rem;
+}
+
+.traco-controls {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.add-traco-btn {
+  background: #007BFF;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.remove-traco-btn {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
 }

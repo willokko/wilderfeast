@@ -95,7 +95,7 @@ document.addEventListener("DOMContentLoaded", function() {
           tiro: parseInt(document.getElementById("tiro").value) || 0,
           travessia: parseInt(document.getElementById("travessia").value) || 0
         },
-        tracos: document.getElementById("tracos").value,
+        tracos: [], // Inicializa array vazio para os traços
         utensilio: {
           nome: document.getElementById("nomeUtensilio").value,
           resistencia: parseInt(document.getElementById("resistencia").value) || 0,
@@ -103,14 +103,55 @@ document.addEventListener("DOMContentLoaded", function() {
         }
       };
 
+      // Coleta todos os traços adicionados
+      const tracosList = document.getElementById("tracos-list");
+      const tracosItems = tracosList.getElementsByClassName("traco-item");
+      Array.from(tracosItems).forEach(tracoItem => {
+        character.tracos.push({
+          nome: tracoItem.querySelector(".traco-nome").value,
+          descricao: tracoItem.querySelector(".traco-descricao").value
+        });
+      });
+
+      // Salva no localStorage
       const characters = JSON.parse(localStorage.getItem("characters") || "[]");
       characters.push(character);
       localStorage.setItem("characters", JSON.stringify(characters));
 
-      // Redireciona automaticamente para a tela inicial
+      // Redireciona para a página inicial
       window.location.href = "index.html";
     });
   }
+
+  // Função para adicionar novo traço
+  function addTraco() {
+    const tracosList = document.getElementById("tracos-list");
+    const tracoItem = document.createElement("div");
+    tracoItem.className = "traco-item";
+    tracoItem.innerHTML = `
+      <div class="form-group">
+        <label>Nome do Traço</label>
+        <input type="text" class="traco-nome" required>
+      </div>
+      <div class="form-group">
+        <label>Descrição</label>
+        <textarea class="traco-descricao" required></textarea>
+      </div>
+      <div class="traco-controls">
+        <button type="button" class="remove-traco-btn">Remover Traço</button>
+      </div>
+    `;
+
+    tracosList.appendChild(tracoItem);
+
+    // Adiciona evento para remover o traço
+    tracoItem.querySelector(".remove-traco-btn").addEventListener("click", () => {
+      tracoItem.remove();
+    });
+  }
+
+  // Adiciona evento ao botão de adicionar traço
+  document.getElementById("add-traco")?.addEventListener("click", addTraco);
 
   /* ====================
    Página de Edição (edit.html)
@@ -151,8 +192,34 @@ if (editForm) {
   document.getElementById("tiro").value = character.habilidades.tiro;
   document.getElementById("travessia").value = character.habilidades.travessia;
 
-  // Preenche os traços
-  document.getElementById("tracos").value = character.tracos;
+  // Preenche os traços existentes
+  const tracosList = document.getElementById("tracos-list");
+  tracosList.innerHTML = ''; // Limpa a lista primeiro
+  
+  character.tracos.forEach(traco => {
+    const tracoItem = document.createElement("div");
+    tracoItem.className = "traco-item";
+    tracoItem.innerHTML = `
+      <div class="form-group">
+        <label>Nome do Traço</label>
+        <input type="text" class="traco-nome" value="${traco.nome}" required>
+      </div>
+      <div class="form-group">
+        <label>Descrição</label>
+        <textarea class="traco-descricao" required>${traco.descricao}</textarea>
+      </div>
+      <div class="traco-controls">
+        <button type="button" class="remove-traco-btn">Remover Traço</button>
+      </div>
+    `;
+
+    tracosList.appendChild(tracoItem);
+
+    // Adiciona evento para remover o traço
+    tracoItem.querySelector(".remove-traco-btn").addEventListener("click", () => {
+      tracoItem.remove();
+    });
+  });
 
   // Preenche o utensílio
   document.getElementById("nomeUtensilio").value = character.utensilio.nome;
@@ -188,13 +255,22 @@ if (editForm) {
         tiro: Math.max(0, parseInt(document.getElementById("tiro").value)) || 0,
         travessia: Math.max(0, parseInt(document.getElementById("travessia").value)) || 0
       },
-      tracos: document.getElementById("tracos").value.trim(),
+      tracos: [],
       utensilio: {
         nome: document.getElementById("nomeUtensilio").value.trim(),
         resistencia: Math.max(0, parseInt(document.getElementById("resistencia").value)) || 0,
         descricao: document.getElementById("descricaoUtensilio").value.trim()
       }
     };
+
+    // Coleta todos os traços
+    const tracosItems = document.getElementsByClassName("traco-item");
+    Array.from(tracosItems).forEach(tracoItem => {
+      updatedCharacter.tracos.push({
+        nome: tracoItem.querySelector(".traco-nome").value,
+        descricao: tracoItem.querySelector(".traco-descricao").value
+      });
+    });
 
     characters[index] = updatedCharacter;
     localStorage.setItem("characters", JSON.stringify(characters));
@@ -278,7 +354,14 @@ if (characterDetailsContainer) {
         <!-- Traços (2/6) -->
         <div class="column large-column">
           <h3 class="column-title">🎭 Traços</h3>
-          <div class="traits-content">${character.tracos}</div>
+          <div class="traits-content">
+            ${character.tracos.map(traco => `
+              <div class="trait-item">
+                <h4 class="trait-name">${traco.nome}</h4>
+                <p class="trait-description">${traco.descricao}</p>
+              </div>
+            `).join('')}
+          </div>
         </div>
       </div>
     `;

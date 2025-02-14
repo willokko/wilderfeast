@@ -110,12 +110,14 @@
         </div>
       </fieldset>
 
-      <!-- Traços -->
-      <fieldset>
-        <legend>Traços</legend>
-        <label for="tracos">Traços:</label>
-        <textarea id="tracos" name="tracos" rows="4" placeholder="Descreva os traços do personagem"></textarea>
-      </fieldset>
+      <!-- Seção de Traços -->
+      <div class="form-section">
+        <h3>Traços</h3>
+        <div id="tracos-list" class="tracos-container">
+          <!-- Os traços serão adicionados aqui dinamicamente -->
+        </div>
+        <button type="button" id="add-traco" class="add-traco-btn">+ Adicionar Traço</button>
+      </div>
 
       <!-- Utensílio -->
       <fieldset>
