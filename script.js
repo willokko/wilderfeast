@@ -90,8 +90,44 @@ document.addEventListener("DOMContentLoaded", function() {
       }
     });
 
-    createForm.addEventListener("submit", function(event) {
+    // Função para converter arquivo de imagem para Base64
+    function convertImageToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+      });
+    }
+
+    // Adiciona o evento para o input de arquivo de imagem
+    const imageInput = document.getElementById("image-file");
+    const imageUrlInput = document.getElementById("imagem");
+
+    if (imageInput && imageUrlInput) {
+      imageInput.addEventListener("change", async function(e) {
+        const file = e.target.files[0];
+        if (file) {
+          try {
+            const base64Image = await convertImageToBase64(file);
+            imageUrlInput.value = base64Image;
+          } catch (error) {
+            console.error("Erro ao converter imagem:", error);
+            alert("Erro ao processar a imagem. Por favor, tente novamente.");
+          }
+        }
+      });
+    }
+
+    createForm.addEventListener("submit", async function(event) {
       event.preventDefault();
+
+      // Verifica se há uma imagem (URL ou arquivo)
+      const imageUrl = document.getElementById("imagem").value;
+      if (!imageUrl) {
+        alert("Por favor, adicione uma imagem para o personagem.");
+        return;
+      }
 
       const character = {
         tipo: document.getElementById("tipo").value,

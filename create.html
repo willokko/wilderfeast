@@ -18,7 +18,7 @@
       <!-- Dados Básicos -->
       <fieldset>
         <legend>Tipo</legend>
-        <select id="tipo" name="tipo" required>
+        <select id="tipo" name="" required>
           <option value="personagem">Personagem</option>
           <option value="monstro">Monstro</option>
         </select>
@@ -28,8 +28,16 @@
         <label for="nome">Nome:</label>
         <input type="text" id="nome" name="nome" required>
         
-        <label for="imagem">URL da Imagem:</label>
-        <input type="text" id="imagem" name="imagem" placeholder="https://exemplo.com/imagem.jpg" required>
+        <div class="form-group">
+          <label for="image-file">Imagem do Personagem (Arquivo):</label>
+          <input type="file" id="image-file" accept="image/*" class="form-control">
+          <small class="form-text text-muted">Selecione uma imagem do seu dispositivo ou cole uma URL abaixo.</small>
+        </div>
+
+        <div class="form-group">
+          <label for="imagem">URL da Imagem (opcional se arquivo foi enviado):</label>
+          <input type="text" id="imagem" name="imagem" class="form-control" placeholder="Cole a URL da imagem aqui">
+        </div>
       </fieldset>
 
       <!-- Estilos (Grade 2x2) -->
