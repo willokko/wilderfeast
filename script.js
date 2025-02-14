@@ -194,19 +194,61 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   }
 
-  // Função para adicionar novo traço
-  function addTraco() {
+  // Função para carregar e exibir o modal de traços
+  function showTracosModal() {
+    const modal = document.getElementById("tracos-modal");
+    const tracosLista = document.getElementById("tracos-lista");
+    
+    // Limpa a lista atual
+    tracosLista.innerHTML = '';
+    
+    // Carrega os traços do JSON
+    fetch('traits.json')
+      .then(response => response.json())
+      .then(tracos => {
+        tracos.forEach(traco => {
+          const tracoElement = document.createElement('div');
+          tracoElement.className = 'traco-option';
+          tracoElement.innerHTML = `
+            <h3>${traco.nome}</h3>
+            <p>${traco.descricao}</p>
+          `;
+          
+          tracoElement.addEventListener('click', () => {
+            addTracoToCharacter(traco);
+            modal.style.display = "none";
+          });
+          
+          tracosLista.appendChild(tracoElement);
+        });
+      });
+    
+    modal.style.display = "block";
+  }
+
+  // Função para adicionar o traço selecionado ao personagem
+  function addTracoToCharacter(traco) {
     const tracosList = document.getElementById("tracos-list");
+    
+    // Verifica se o traço já foi adicionado
+    const tracoExistente = Array.from(tracosList.getElementsByClassName("traco-nome"))
+      .some(input => input.value === traco.nome);
+      
+    if (tracoExistente) {
+      alert("Este traço já foi adicionado ao personagem!");
+      return;
+    }
+
     const tracoItem = document.createElement("div");
     tracoItem.className = "traco-item";
     tracoItem.innerHTML = `
       <div class="form-group">
         <label>Nome do Traço</label>
-        <input type="text" class="traco-nome" required>
+        <input type="text" class="traco-nome" value="${traco.nome}" required readonly>
       </div>
       <div class="form-group">
         <label>Descrição</label>
-        <textarea class="traco-descricao" required></textarea>
+        <textarea class="traco-descricao" required readonly>${traco.descricao}</textarea>
       </div>
       <div class="traco-controls">
         <button type="button" class="remove-traco-btn">Remover Traço</button>
@@ -221,8 +263,21 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   }
 
-  // Adiciona evento ao botão de adicionar traço
-  document.getElementById("add-traco")?.addEventListener("click", addTraco);
+  // Atualiza o evento do botão de adicionar traço
+  document.getElementById("add-traco")?.addEventListener("click", showTracosModal);
+
+  // Adiciona evento para fechar o modal
+  document.querySelector(".close")?.addEventListener("click", () => {
+    document.getElementById("tracos-modal").style.display = "none";
+  });
+
+  // Fecha o modal se clicar fora dele
+  window.addEventListener("click", (event) => {
+    const modal = document.getElementById("tracos-modal");
+    if (event.target === modal) {
+      modal.style.display = "none";
+    }
+  });
 
   // Função para adicionar parte
   function addParte() {
@@ -255,7 +310,7 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 
   // Adiciona eventos aos botões de adicionar
-  document.getElementById("add-traco")?.addEventListener("click", addTraco);
+  document.getElementById("add-traco")?.addEventListener("click", showTracosModal);
   document.getElementById("add-parte")?.addEventListener("click", addParte);
 
   /* ====================
@@ -307,11 +362,11 @@ if (editForm) {
     tracoItem.innerHTML = `
       <div class="form-group">
         <label>Nome do Traço</label>
-        <input type="text" class="traco-nome" value="${traco.nome}" required>
+        <input type="text" class="traco-nome" value="${traco.nome}" required readonly>
       </div>
       <div class="form-group">
         <label>Descrição</label>
-        <textarea class="traco-descricao" required>${traco.descricao}</textarea>
+        <textarea class="traco-descricao" required readonly>${traco.descricao}</textarea>
       </div>
       <div class="traco-controls">
         <button type="button" class="remove-traco-btn">Remover Traço</button>
@@ -326,10 +381,12 @@ if (editForm) {
     });
   });
 
-  // Preenche o utensílio
-  document.getElementById("nomeUtensilio").value = character.utensilio.nome;
-  document.getElementById("resistencia").value = character.utensilio.resistencia;
-  document.getElementById("descricaoUtensilio").value = character.utensilio.descricao;
+  // Preenche o utensílio ou partes
+  if (character.tipo === "personagem") {
+    document.getElementById("nomeUtensilio").value = character.utensilio.nome;
+    document.getElementById("resistencia").value = character.utensilio.resistencia;
+    document.getElementById("descricaoUtensilio").value = character.utensilio.descricao;
+  }
 
   // Manipula o envio do formulário de edição
   editForm.addEventListener("submit", function(event) {
@@ -337,34 +394,34 @@ if (editForm) {
 
     // Atualiza o objeto personagem
     const updatedCharacter = {
-      tipo: document.getElementById("tipo").value.trim(),
-      nome: document.getElementById("nome").value.trim(),
-      imagem: document.getElementById("imagem").value.trim(),
+      tipo: document.getElementById("tipo").value,
+      nome: document.getElementById("nome").value,
+      imagem: document.getElementById("imagem").value,
       estilos: {
-        poderoso: Math.max(0, parseInt(document.getElementById("poderoso").value)) || 0,
-        ligeiro: Math.max(0, parseInt(document.getElementById("ligeiro").value)) || 0,
-        preciso: Math.max(0, parseInt(document.getElementById("preciso").value)) || 0,
-        capcioso: Math.max(0, parseInt(document.getElementById("capcioso").value)) || 0
+        poderoso: parseInt(document.getElementById("poderoso").value) || 0,
+        ligeiro: parseInt(document.getElementById("ligeiro").value) || 0,
+        preciso: parseInt(document.getElementById("preciso").value) || 0,
+        capcioso: parseInt(document.getElementById("capcioso").value) || 0
       },
       habilidades: {
-        agarrao: Math.max(0, parseInt(document.getElementById("agarrao").value)) || 0,
-        armazenamento: Math.max(0, parseInt(document.getElementById("armazenamento").value)) || 0,
-        assegurar: Math.max(0, parseInt(document.getElementById("assegurar").value)) || 0,
-        busca: Math.max(0, parseInt(document.getElementById("busca").value)) || 0,
-        chamado: Math.max(0, parseInt(document.getElementById("chamado").value)) || 0,
-        cura: Math.max(0, parseInt(document.getElementById("cura").value)) || 0,
-        exibicao: Math.max(0, parseInt(document.getElementById("exibicao").value)) || 0,
-        golpe: Math.max(0, parseInt(document.getElementById("golpe").value)) || 0,
-        manufatura: Math.max(0, parseInt(document.getElementById("manufatura").value)) || 0,
-        estudo: Math.max(0, parseInt(document.getElementById("estudo").value)) || 0,
-        tiro: Math.max(0, parseInt(document.getElementById("tiro").value)) || 0,
-        travessia: Math.max(0, parseInt(document.getElementById("travessia").value)) || 0
+        agarrao: parseInt(document.getElementById("agarrao").value) || 0,
+        armazenamento: parseInt(document.getElementById("armazenamento").value) || 0,
+        assegurar: parseInt(document.getElementById("assegurar").value) || 0,
+        busca: parseInt(document.getElementById("busca").value) || 0,
+        chamado: parseInt(document.getElementById("chamado").value) || 0,
+        cura: parseInt(document.getElementById("cura").value) || 0,
+        exibicao: parseInt(document.getElementById("exibicao").value) || 0,
+        golpe: parseInt(document.getElementById("golpe").value) || 0,
+        manufatura: parseInt(document.getElementById("manufatura").value) || 0,
+        estudo: parseInt(document.getElementById("estudo").value) || 0,
+        tiro: parseInt(document.getElementById("tiro").value) || 0,
+        travessia: parseInt(document.getElementById("travessia").value) || 0
       },
       tracos: [],
       utensilio: {
-        nome: document.getElementById("nomeUtensilio").value.trim(),
-        resistencia: Math.max(0, parseInt(document.getElementById("resistencia").value)) || 0,
-        descricao: document.getElementById("descricaoUtensilio").value.trim()
+        nome: document.getElementById("nomeUtensilio").value,
+        resistencia: parseInt(document.getElementById("resistencia").value) || 0,
+        descricao: document.getElementById("descricaoUtensilio").value
       }
     };
 

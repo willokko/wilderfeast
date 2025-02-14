@@ -868,3 +868,72 @@ input[type="file"]::file-selector-button:hover {
 .partes-container {
   margin-bottom: 1rem;
 }
+
+/* Modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.7);
+}
+
+.modal-content {
+  background-color: #2d2d2d;
+  margin: 10% auto;
+  padding: 20px;
+  border: 1px solid #404040;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 600px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #404040;
+}
+
+.close {
+  color: #aaa;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close:hover {
+  color: #fff;
+}
+
+.traco-option {
+  background-color: #363636;
+  padding: 1rem;
+  margin-bottom: 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-left: 3px solid transparent;
+}
+
+.traco-option:hover {
+  background-color: #404040;
+  border-left-color: #007BFF;
+}
+
+.traco-option h3 {
+  color: #007BFF;
+  margin: 0 0 0.5rem 0;
+}
+
+.traco-option p {
+  margin: 0;
+  color: #e0e0e0;
+}
