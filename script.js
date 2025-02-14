@@ -67,10 +67,32 @@ document.addEventListener("DOMContentLoaded", function() {
      ==================== */
   const createForm = document.getElementById("create-character-form");
   if (createForm) {
+    // Mantém o evento de alternar tipo que já existe
+    document.getElementById("tipo").addEventListener("change", function(e) {
+      const tipoSelecionado = e.target.value;
+      const utensilioSection = document.getElementById("utensilio-section");
+      const partesSection = document.getElementById("partes-section");
+      
+      // Mostra/oculta seções
+      utensilioSection.style.display = tipoSelecionado === "personagem" ? "block" : "none";
+      partesSection.style.display = tipoSelecionado === "monstro" ? "block" : "none";
+
+      // Atualiza atributos 'required' dos campos
+      const utensilioCampos = utensilioSection.querySelectorAll("[required]");
+      const partesCampos = partesSection.querySelectorAll("[required]");
+      
+      if (tipoSelecionado === "personagem") {
+        utensilioCampos.forEach(campo => campo.setAttribute("required", ""));
+        partesCampos.forEach(campo => campo.removeAttribute("required"));
+      } else {
+        utensilioCampos.forEach(campo => campo.removeAttribute("required"));
+        partesCampos.forEach(campo => campo.setAttribute("required", ""));
+      }
+    });
+
     createForm.addEventListener("submit", function(event) {
       event.preventDefault();
 
-      // Cria o objeto personagem com os valores do formulário (incluindo a imagem)
       const character = {
         tipo: document.getElementById("tipo").value,
         nome: document.getElementById("nome").value,
@@ -95,23 +117,36 @@ document.addEventListener("DOMContentLoaded", function() {
           tiro: parseInt(document.getElementById("tiro").value) || 0,
           travessia: parseInt(document.getElementById("travessia").value) || 0
         },
-        tracos: [], // Inicializa array vazio para os traços
-        utensilio: {
-          nome: document.getElementById("nomeUtensilio").value,
-          resistencia: parseInt(document.getElementById("resistencia").value) || 0,
-          descricao: document.getElementById("descricaoUtensilio").value
-        }
+        tracos: []
       };
 
-      // Coleta todos os traços adicionados
-      const tracosList = document.getElementById("tracos-list");
-      const tracosItems = tracosList.getElementsByClassName("traco-item");
+      // Coleta traços
+      const tracosItems = document.getElementsByClassName("traco-item");
       Array.from(tracosItems).forEach(tracoItem => {
         character.tracos.push({
           nome: tracoItem.querySelector(".traco-nome").value,
           descricao: tracoItem.querySelector(".traco-descricao").value
         });
       });
+
+      // Adiciona utensílio ou partes baseado no tipo
+      if (character.tipo === "personagem") {
+        character.utensilio = {
+          nome: document.getElementById("nomeUtensilio").value,
+          resistencia: parseInt(document.getElementById("resistencia").value) || 0,
+          descricao: document.getElementById("descricaoUtensilio").value
+        };
+      } else {
+        character.partes = [];
+        const partesItems = document.getElementsByClassName("parte-item");
+        Array.from(partesItems).forEach(parteItem => {
+          character.partes.push({
+            nome: parteItem.querySelector(".parte-nome").value,
+            resistencia: parseInt(parteItem.querySelector(".parte-resistencia").value) || 0,
+            descricao: parteItem.querySelector(".parte-descricao").value
+          });
+        });
+      }
 
       // Salva no localStorage
       const characters = JSON.parse(localStorage.getItem("characters") || "[]");
@@ -152,6 +187,40 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // Adiciona evento ao botão de adicionar traço
   document.getElementById("add-traco")?.addEventListener("click", addTraco);
+
+  // Função para adicionar parte
+  function addParte() {
+    const partesList = document.getElementById("partes-list");
+    const parteItem = document.createElement("div");
+    parteItem.className = "item-container parte-item";
+    parteItem.innerHTML = `
+      <div class="form-group">
+        <label>Nome da Parte</label>
+        <input type="text" class="item-nome parte-nome" required>
+      </div>
+      <div class="form-group">
+        <label>Resistência</label>
+        <input type="number" class="parte-resistencia" value="0" required>
+      </div>
+      <div class="form-group">
+        <label>Descrição</label>
+        <textarea class="item-descricao parte-descricao" required></textarea>
+      </div>
+      <div class="item-controls">
+        <button type="button" class="remove-btn">Remover Parte</button>
+      </div>
+    `;
+
+    partesList.appendChild(parteItem);
+
+    parteItem.querySelector(".remove-btn").addEventListener("click", () => {
+      parteItem.remove();
+    });
+  }
+
+  // Adiciona eventos aos botões de adicionar
+  document.getElementById("add-traco")?.addEventListener("click", addTraco);
+  document.getElementById("add-parte")?.addEventListener("click", addParte);
 
   /* ====================
    Página de Edição (edit.html)
@@ -341,14 +410,26 @@ if (characterDetailsContainer) {
           </div>
         </div>
 
-        <!-- Utensílio (2/6) -->
+        <!-- Utensílio/Partes (2/6) -->
         <div class="column large-column">
-          <h3 class="column-title">🔧 Utensílio</h3>
-          <div class="tool-info">
-            <p><strong>Nome:</strong> ${character.utensilio.nome}</p>
-            <p><strong>Resistência:</strong> ${character.utensilio.resistencia}</p>
-            <p><strong>Descrição:</strong> ${character.utensilio.descricao}</p>
-          </div>
+          ${character.tipo === "personagem" ? `
+            <h3 class="column-title">🔧 Utensílio</h3>
+            <div class="tool-info">
+              <p><strong>Nome:</strong> ${character.utensilio.nome}</p>
+              <p><strong>Resistência:</strong> ${character.utensilio.resistencia}</p>
+              <p><strong>Descrição:</strong> ${character.utensilio.descricao}</p>
+            </div>
+          ` : `
+            <h3 class="column-title">🦾 Partes</h3>
+            <div class="traits-content">
+              ${character.partes.map(parte => `
+                <div class="trait-item">
+                  <h4 class="trait-name">${parte.nome} (Resistência: ${parte.resistencia})</h4>
+                  <p class="trait-description">${parte.descricao}</p>
+                </div>
+              `).join('')}
+            </div>
+          `}
         </div>
 
         <!-- Traços (2/6) -->

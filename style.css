@@ -665,13 +665,17 @@ form textarea:focus {
 
 /* Estilos para o formulário de adição de traços */
 .tracos-container {
+  background: #2d2d2d;
+  border-radius: 6px;
+  padding: 1rem;
   margin-bottom: 1rem;
 }
 
-.traco-item {
-  background: #2d2d2d;
+.item-container {
+  background: #363636;
   padding: 1rem;
   border-radius: 6px;
+  border-left: 3px solid #007BFF;
   margin-bottom: 0.8rem;
 }
 
