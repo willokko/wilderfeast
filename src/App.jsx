@@ -9,7 +9,7 @@ export default function App() {
       <CharacterProvider>
         <div className="min-h-screen bg-wilder-900">
           <Header />
-          <main className="container mx-auto px-4 py-8">
+          <main className="container mx-auto px-4 py-8 mt-16">
             <AppRoutes />
           </main>
         </div>

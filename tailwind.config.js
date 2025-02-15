@@ -36,6 +36,9 @@ export default {
       backgroundImage: {
         'texture': "url('/textures/paper-texture.png')",
         'wood': "url('/textures/wood-texture.png')",
+      },
+      scale: {
+        '102': '1.02',
       }
     },
   },

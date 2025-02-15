@@ -1,5 +1,6 @@
 import { useRef, useEffect } from 'react'
 import { gsap } from 'gsap'
+import { FiPlus, FiMinus } from 'react-icons/fi'
 
 export default function StatGrid({ 
   title, 
@@ -34,13 +35,29 @@ export default function StatGrid({
           >
             <span className="capitalize">{key}</span>
             {isEditing ? (
-              <input
-                type="number"
-                name={key}
-                defaultValue={value}
-                min={0}
-                className="w-16 text-right bg-wilder-600 rounded px-2 py-1"
-              />
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => onStatClick?.(key, Math.max(0, value - 1))}
+                  className="p-1 hover:bg-wilder-600 rounded"
+                >
+                  <FiMinus className="w-4 h-4" />
+                </button>
+                <input
+                  type="number"
+                  name={key}
+                  defaultValue={value}
+                  min={0}
+                  className="w-16 text-right bg-wilder-600 rounded px-2 py-1"
+                />
+                <button
+                  type="button"
+                  onClick={() => onStatClick?.(key, Math.min(5, value + 1))}
+                  className="p-1 hover:bg-wilder-600 rounded"
+                >
+                  <FiPlus className="w-4 h-4" />
+                </button>
+              </div>
             ) : (
               <span className="font-bold text-lg">{value}</span>
             )}
