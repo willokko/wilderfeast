@@ -74,9 +74,13 @@ export default function CreateCharacter() {
   const formRef = useRef(null)
   const fileInputRef = useRef(null)
 
+  const [currentStep, setCurrentStep] = useState(1)
+  const [imagePreview, setImagePreview] = useState(null)
+  const [dragActive, setDragActive] = useState(false)
   const [formData, setFormData] = useState({
     tipo: 'personagem',
     nome: '',
+    imagem: '',
     estilos: {
       poderoso: 0,
       ligeiro: 0,
@@ -96,37 +100,9 @@ export default function CreateCharacter() {
       estudo: 0,
       tiro: 0,
       travessia: 0
-    }
+    },
+    tracos: []
   })
-  const [currentStep, setCurrentStep] = useState(1)
-  const [tracos, setTracos] = useState([{ nome: '', descricao: '' }])
-  const [partes, setPartes] = useState([{ nome: '', resistencia: 0, descricao: '' }])
-  const [imagePreview, setImagePreview] = useState('')
-  const [dragActive, setDragActive] = useState(false)
-  const [imageUrl, setImageUrl] = useState('')
-
-  const handleImageChange = (e) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setImagePreview(reader.result)
-        setImageUrl('')
-      }
-      reader.readAsDataURL(file)
-    }
-  }
-
-  const handleImageUrl = (e) => {
-    const url = e.target.value
-    setImageUrl(url)
-    if (url) {
-      setImagePreview(url)
-      if (fileInputRef.current) {
-        fileInputRef.current.value = ''
-      }
-    }
-  }
 
   const handleDrag = (e) => {
     e.preventDefault()
@@ -144,28 +120,79 @@ export default function CreateCharacter() {
     setDragActive(false)
     
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      handleImageChange({ target: { files: e.dataTransfer.files }})
+      handleImageUpload({ target: { files: e.dataTransfer.files }})
     }
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    const character = {
-      ...formData,
-      imagem: imagePreview,
-      tracos,
-      ...(formData.tipo === 'personagem' 
-        ? { utensilio: {
-            nome: e.target.nomeUtensilio.value,
-            resistencia: parseInt(e.target.resistenciaUtensilio.value) || 0,
-            descricao: e.target.descricaoUtensilio.value
-          }}
-        : { partes }
-      )
-    }
 
-    addCharacter(character)
-    navigate('/')
+    try {
+      const newCharacter = {
+        ...formData,
+        id: Date.now().toString(),
+        createdAt: new Date().toISOString()
+      }
+
+      await addCharacter(newCharacter)
+
+      navigate('/')
+    } catch (error) {
+      console.error('Erro ao criar personagem:', error)
+    }
+  }
+
+  const updateFormData = (field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }))
+  }
+
+  const handleEstiloChange = (estilo, valor) => {
+    setFormData(prev => ({
+      ...prev,
+      estilos: {
+        ...prev.estilos,
+        [estilo]: valor
+      }
+    }))
+  }
+
+  const handleHabilidadeChange = (habilidade, valor) => {
+    setFormData(prev => ({
+      ...prev,
+      habilidades: {
+        ...prev.habilidades,
+        [habilidade]: valor
+      }
+    }))
+  }
+
+  const handleTracoAdd = (traco) => {
+    setFormData(prev => ({
+      ...prev,
+      tracos: [...prev.tracos, traco]
+    }))
+  }
+
+  const handleTracoRemove = (index) => {
+    setFormData(prev => ({
+      ...prev,
+      tracos: prev.tracos.filter((_, i) => i !== index)
+    }))
+  }
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setImagePreview(reader.result)
+        updateFormData('imagem', reader.result)
+      }
+      reader.readAsDataURL(file)
+    }
   }
 
   const renderStep = () => {
@@ -208,8 +235,11 @@ export default function CreateCharacter() {
                   <label className="block text-wilder-200 mb-2">URL da Imagem</label>
                   <input
                     type="text"
-                    value={imageUrl}
-                    onChange={handleImageUrl}
+                    value={formData.imagem}
+                    onChange={e => {
+                      setImagePreview(e.target.value)
+                      updateFormData('imagem', e.target.value)
+                    }}
                     placeholder="Cole a URL da imagem aqui"
                     className="input-field"
                   />
@@ -229,7 +259,7 @@ export default function CreateCharacter() {
                     ref={fileInputRef}
                     type="file"
                     accept="image/*"
-                    onChange={handleImageChange}
+                    onChange={handleImageUpload}
                     className="hidden"
                   />
                   <div className="flex flex-col items-center gap-4">
@@ -256,8 +286,8 @@ export default function CreateCharacter() {
                       <button
                         type="button"
                         onClick={() => {
-                          setImagePreview('')
-                          setImageUrl('')
+                          setImagePreview(null)
+                          updateFormData('imagem', '')
                           if (fileInputRef.current) {
                             fileInputRef.current.value = ''
                           }
@@ -287,13 +317,7 @@ export default function CreateCharacter() {
                   name={estilo}
                   value={valor}
                   onChange={(newValue) => {
-                    setFormData(prev => ({
-                      ...prev,
-                      estilos: {
-                        ...prev.estilos,
-                        [estilo]: newValue
-                      }
-                    }))
+                    handleEstiloChange(estilo, newValue)
                   }}
                 />
               ))}
@@ -316,13 +340,7 @@ export default function CreateCharacter() {
                     name={habilidade}
                     value={valor}
                     onChange={(e) => {
-                      setFormData(prev => ({
-                        ...prev,
-                        habilidades: {
-                          ...prev.habilidades,
-                          [habilidade]: parseInt(e.target.value) || 0
-                        }
-                      }))
+                      handleHabilidadeChange(habilidade, parseInt(e.target.value) || 0)
                     }}
                     className="input-field"
                     min="0"
@@ -341,7 +359,7 @@ export default function CreateCharacter() {
               {formData.tipo === 'personagem' ? 'Traços' : 'Partes'}
             </h2>
             <div className="space-y-4">
-              {(formData.tipo === 'personagem' ? tracos : partes).map((item, index) => (
+              {formData.tracos.map((item, index) => (
                 <div key={index} className="bg-wilder-700/50 p-4 rounded-lg">
                   <div className="flex justify-between items-start mb-4">
                     <h3 className="text-lg font-title">
@@ -350,11 +368,7 @@ export default function CreateCharacter() {
                     {index > 0 && (
                       <button
                         type="button"
-                        onClick={() => {
-                          const newItems = [...(formData.tipo === 'personagem' ? tracos : partes)]
-                          newItems.splice(index, 1)
-                          formData.tipo === 'personagem' ? setTracos(newItems) : setPartes(newItems)
-                        }}
+                        onClick={() => handleTracoRemove(index)}
                         className="btn btn-danger text-sm"
                       >
                         Remover
@@ -366,9 +380,9 @@ export default function CreateCharacter() {
                       type="text"
                       value={item.nome}
                       onChange={(e) => {
-                        const newItems = [...(formData.tipo === 'personagem' ? tracos : partes)]
-                        newItems[index] = { ...item, nome: e.target.value }
-                        formData.tipo === 'personagem' ? setTracos(newItems) : setPartes(newItems)
+                        const newTracos = [...formData.tracos]
+                        newTracos[index] = { ...item, nome: e.target.value }
+                        handleTracoAdd(newTracos[index])
                       }}
                       className="input-field"
                       placeholder={`Nome do ${formData.tipo === 'personagem' ? 'traço' : 'parte'}`}
@@ -378,9 +392,9 @@ export default function CreateCharacter() {
                         type="number"
                         value={item.resistencia}
                         onChange={(e) => {
-                          const newPartes = [...partes]
-                          newPartes[index] = { ...item, resistencia: parseInt(e.target.value) || 0 }
-                          setPartes(newPartes)
+                          const newTracos = [...formData.tracos]
+                          newTracos[index] = { ...item, resistencia: parseInt(e.target.value) || 0 }
+                          handleTracoAdd(newTracos[index])
                         }}
                         className="input-field"
                         placeholder="Resistência"
@@ -390,9 +404,9 @@ export default function CreateCharacter() {
                     <textarea
                       value={item.descricao}
                       onChange={(e) => {
-                        const newItems = [...(formData.tipo === 'personagem' ? tracos : partes)]
-                        newItems[index] = { ...item, descricao: e.target.value }
-                        formData.tipo === 'personagem' ? setTracos(newItems) : setPartes(newItems)
+                        const newTracos = [...formData.tracos]
+                        newTracos[index] = { ...item, descricao: e.target.value }
+                        handleTracoAdd(newTracos[index])
                       }}
                       className="input-field"
                       placeholder={`Descrição do ${formData.tipo === 'personagem' ? 'traço' : 'parte'}`}
@@ -406,9 +420,7 @@ export default function CreateCharacter() {
                 onClick={() => {
                   const newItem = { nome: '', descricao: '' }
                   if (formData.tipo === 'monstro') newItem.resistencia = 0
-                  formData.tipo === 'personagem' 
-                    ? setTracos([...tracos, newItem])
-                    : setPartes([...partes, newItem])
+                  handleTracoAdd(newItem)
                 }}
                 className="btn btn-primary w-full"
               >
@@ -421,11 +433,11 @@ export default function CreateCharacter() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div className="container mx-auto px-4 py-6 sm:py-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
         <div className="lg:col-span-2">
-          <div className="mb-8">
-            <h1 className="text-4xl font-title mb-4">
+          <div className="mb-6 sm:mb-8">
+            <h1 className="text-3xl sm:text-4xl font-title mb-3 sm:mb-4">
               Criar Novo {formData.tipo === 'personagem' ? 'Personagem' : 'Monstro'}
             </h1>
             
@@ -440,33 +452,34 @@ export default function CreateCharacter() {
             </div>
           </div>
 
-          <form ref={formRef} onSubmit={handleSubmit}>
+          <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
             <motion.div
               key={currentStep}
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
+              className="space-y-6 sm:space-y-8"
             >
               {renderStep()}
             </motion.div>
 
-            <div className="flex justify-between mt-8">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-8">
               <button
                 type="button"
                 onClick={() => navigate('/')}
-                className="btn flex items-center gap-2"
+                className="btn w-full sm:w-auto"
               >
-                <FiArrowLeft className="w-6 h-6" /> Voltar
+                Cancelar
               </button>
               
-              <div className="flex gap-4">
+              <div className="flex gap-4 w-full sm:w-auto">
                 {currentStep > 1 && (
                   <button
                     type="button"
                     onClick={() => setCurrentStep(prev => prev - 1)}
-                    className="btn"
+                    className="btn w-full sm:w-auto"
                   >
-                    Anterior
+                    Voltar
                   </button>
                 )}
                 
@@ -474,12 +487,15 @@ export default function CreateCharacter() {
                   <button
                     type="button"
                     onClick={() => setCurrentStep(prev => prev + 1)}
-                    className="btn btn-primary"
+                    className="btn btn-primary w-full sm:w-auto"
                   >
                     Próximo
                   </button>
                 ) : (
-                  <button type="submit" className="btn btn-primary">
+                  <button 
+                    type="submit"
+                    className="btn btn-primary w-full sm:w-auto"
+                  >
                     Criar {formData.tipo === 'personagem' ? 'Personagem' : 'Monstro'}
                   </button>
                 )}
@@ -488,11 +504,8 @@ export default function CreateCharacter() {
           </form>
         </div>
 
-        <div className="lg:col-span-1">
-          <CharacterPreview 
-            data={formData}
-            imagePreview={imagePreview}
-          />
+        <div className="hidden lg:block">
+          <CharacterPreview data={formData} imagePreview={imagePreview} />
         </div>
       </div>
     </div>

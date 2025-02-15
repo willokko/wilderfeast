@@ -4,6 +4,7 @@ import { useCharacters } from '../contexts/CharacterContext'
 import { gsap } from 'gsap'
 import StatGrid from './shared/StatGrid'
 import TraitsList from './shared/TraitsList'
+import { Link } from 'react-router-dom'
 
 export default function EditCharacter() {
   const { id } = useParams()
@@ -127,30 +128,30 @@ export default function EditCharacter() {
   if (!character) return null
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      {/* Cabeçalho */}
+    <div className="container mx-auto px-4 py-6 sm:py-8">
       <div 
         ref={headerRef}
-        className="mb-8 bg-wilder-800 p-6 rounded-lg shadow-mystic text-center"
+        className="mb-6 sm:mb-8 bg-wilder-800 p-4 sm:p-6 rounded-lg shadow-mystic text-center"
       >
-        <h1 className="text-4xl font-title mb-4">Editar {tipo === 'personagem' ? 'Personagem' : 'Monstro'}</h1>
-        <p className="text-wilder-300 text-lg max-w-2xl mx-auto">
+        <h1 className="text-3xl sm:text-4xl font-title mb-3 sm:mb-4">
+          Editar {tipo === 'personagem' ? 'Personagem' : 'Monstro'}
+        </h1>
+        <p className="text-wilder-300 text-sm sm:text-lg max-w-2xl mx-auto">
           Modifique os detalhes do seu {tipo === 'personagem' ? 'personagem' : 'monstro'} abaixo.
         </p>
       </div>
 
-      <form ref={formRef} onSubmit={handleSubmit} className="space-y-8">
-        {/* Tipo e Informações Básicas */}
-        <div className="card p-6">
-          <h2 className="section-title">Informações Básicas</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <form ref={formRef} onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
+        <div className="card p-4 sm:p-6">
+          <h2 className="section-title text-xl sm:text-2xl mb-4 sm:mb-6">Informações Básicas</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             <div className="form-field">
               <label className="block text-wilder-200 mb-2">Tipo</label>
               <select
                 name="tipo"
                 value={tipo}
                 onChange={(e) => setTipo(e.target.value)}
-                className="input-field"
+                className="input-field text-sm sm:text-base"
               >
                 <option value="personagem">Personagem</option>
                 <option value="monstro">Monstro</option>
@@ -164,7 +165,7 @@ export default function EditCharacter() {
                 name="nome"
                 defaultValue={character.nome}
                 required
-                className="input-field"
+                className="input-field text-sm sm:text-base"
                 placeholder="Nome do personagem"
               />
             </div>
@@ -406,27 +407,19 @@ export default function EditCharacter() {
           )}
         </div>
 
-        {/* Botões de Ação */}
-        <div className="flex justify-between">
-          <button
-            type="button"
-            onClick={handleDelete}
-            className="btn btn-danger"
+        <div className="flex flex-col sm:flex-row justify-between gap-4">
+          <Link 
+            to={`/view/${id}`}
+            className="btn w-full sm:w-auto order-2 sm:order-1"
           >
-            Excluir
+            Cancelar
+          </Link>
+          <button 
+            type="submit" 
+            className="btn btn-primary w-full sm:w-auto order-1 sm:order-2"
+          >
+            Salvar Alterações
           </button>
-          <div className="flex gap-4">
-            <button
-              type="button"
-              onClick={() => navigate(`/view/${id}`)}
-              className="btn"
-            >
-              Cancelar
-            </button>
-            <button type="submit" className="btn btn-primary">
-              Salvar Alterações
-            </button>
-          </div>
         </div>
       </form>
     </div>
