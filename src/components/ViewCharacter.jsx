@@ -76,30 +76,31 @@ export default function ViewCharacter() {
   if (!character) return null
 
   return (
-    <div ref={containerRef} className="container mx-auto px-4 py-8">
+    <div ref={containerRef} className="container mx-auto px-4 py-6 sm:py-8">
       {/* Cabeçalho do Personagem */}
-      <div className="character-header flex items-center gap-6 mb-8 bg-wilder-800 p-6 rounded-lg shadow-mystic">
+      <div className="character-header flex flex-col sm:flex-row items-center gap-4 sm:gap-6 mb-6 sm:mb-8 
+                    bg-wilder-800 p-4 sm:p-6 rounded-lg shadow-mystic">
         <img 
           src={character.imagem} 
           alt={character.nome} 
-          className="w-32 h-32 rounded-full object-cover border-4 border-wilder-600"
+          className="w-24 h-24 sm:w-32 sm:h-32 rounded-full object-cover border-4 border-wilder-600"
         />
-        <div className="flex-1">
-          <h1 className="text-4xl font-title mb-2">{character.nome}</h1>
-          <p className="text-wilder-300 text-lg">
+        <div className="flex-1 text-center sm:text-left">
+          <h1 className="text-3xl sm:text-4xl font-title mb-2">{character.nome}</h1>
+          <p className="text-wilder-300 text-base sm:text-lg">
             {character.tipo === 'personagem' ? 'Personagem' : 'Monstro'}
           </p>
         </div>
-        <div className="flex gap-4">
+        <div className="flex gap-2 sm:gap-4">
           <Link 
             to={`/edit/${id}`} 
-            className="btn btn-primary"
+            className="btn btn-primary text-sm sm:text-base px-3 sm:px-4 py-2"
           >
             Editar
           </Link>
           <Link 
             to="/" 
-            className="btn"
+            className="btn text-sm sm:text-base px-3 sm:px-4 py-2"
           >
             Voltar
           </Link>
