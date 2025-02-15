@@ -68,27 +68,27 @@ export default function CharacterList() {
 
       <div className="w-full px-3 xs:px-4 sm:px-6 max-w-7xl mx-auto">
         {/* Barra de Busca e Filtros */}
-        <div className="flex flex-col xs:flex-row justify-between items-start 
-                     xs:items-center gap-3 xs:gap-4 mb-4 xs:mb-6 sm:mb-8 w-full">
+        <div className="flex flex-col gap-4 mb-6 w-full">
           {/* Busca */}
-          <div className="w-full xs:w-auto relative">
+          <div className="w-full relative">
             <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-wilder-400 w-5 h-5" />
             <input
               type="text"
               placeholder="Buscar personagens..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full xs:w-64 pl-10 pr-4 py-2 bg-wilder-800 rounded-lg
-                       text-sm xs:text-base border-2 border-wilder-700 focus:border-mystic-gold"
+              className="w-full pl-10 pr-4 py-2 bg-wilder-800 rounded-lg
+                       text-sm border-2 border-wilder-700 focus:border-mystic-gold"
             />
           </div>
 
-          <div className="flex gap-4">
+          {/* Filtros e Visualização */}
+          <div className="flex justify-between items-center w-full">
             {/* Filtros */}
-            <div className="flex gap-2">
+            <div className="flex gap-2 overflow-x-auto pb-2 max-w-[70%]">
               <button
                 onClick={() => setFilter('todos')}
-                className={`px-3 py-1.5 rounded-full text-sm border-2 
+                className={`px-3 py-1.5 rounded-full text-sm border-2 whitespace-nowrap
                          ${filter === 'todos' 
                            ? 'bg-mystic-gold border-mystic-gold text-wilder-900' 
                            : 'border-wilder-700 text-wilder-200'}`}
@@ -97,7 +97,7 @@ export default function CharacterList() {
               </button>
               <button
                 onClick={() => setFilter('personagem')}
-                className={`px-3 py-1.5 rounded-full text-sm border-2 
+                className={`px-3 py-1.5 rounded-full text-sm border-2 whitespace-nowrap
                          ${filter === 'personagem' 
                            ? 'bg-mystic-gold border-mystic-gold text-wilder-900' 
                            : 'border-wilder-700 text-wilder-200'}`}
@@ -106,7 +106,7 @@ export default function CharacterList() {
               </button>
               <button
                 onClick={() => setFilter('monstro')}
-                className={`px-3 py-1.5 rounded-full text-sm border-2 
+                className={`px-3 py-1.5 rounded-full text-sm border-2 whitespace-nowrap
                          ${filter === 'monstro' 
                            ? 'bg-mystic-red border-mystic-red text-wilder-900' 
                            : 'border-wilder-700 text-wilder-200'}`}
