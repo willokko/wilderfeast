@@ -6,11 +6,15 @@
 
 @layer base {
   html {
-    @apply antialiased;
+    @apply antialiased overflow-x-hidden;
   }
   
   body {
-    @apply bg-wilder-900 text-wilder-100 min-h-screen bg-texture bg-repeat bg-opacity-5;
+    @apply bg-wilder-900 text-wilder-100 min-h-screen bg-texture bg-repeat bg-opacity-5 overflow-x-hidden;
+  }
+
+  #root {
+    @apply overflow-x-hidden;
   }
 
   h1, h2, h3, h4, h5, h6 {

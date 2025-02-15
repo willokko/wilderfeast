@@ -22,12 +22,12 @@ export default function StatGrid({
   }, [])
 
   return (
-    <div className={`card p-3 xs:p-4 sm:p-5 ${className}`}>
+    <div className={`card p-3 xs:p-4 sm:p-5 max-w-full overflow-hidden ${className}`}>
       <h3 className="text-base xs:text-lg sm:text-xl md:text-2xl font-title mb-2 xs:mb-3 sm:mb-4">
         {title}
       </h3>
       
-      <div ref={gridRef} className="grid grid-cols-1 xs:grid-cols-2 gap-2 xs:gap-3 sm:gap-4">
+      <div ref={gridRef} className="grid grid-cols-1 xs:grid-cols-2 gap-2 xs:gap-3 sm:gap-4 w-full">
         {Object.entries(stats).map(([key, value]) => (
           <div 
             key={key}
