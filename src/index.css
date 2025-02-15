@@ -1,0 +1,125 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Merriweather:wght@300;400;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply antialiased;
+  }
+  
+  body {
+    @apply bg-wilder-900 text-wilder-100 min-h-screen bg-texture bg-repeat bg-opacity-5;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-title;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-wilder-800 rounded-lg border-2 border-wilder-700 
+           shadow-mystic transition-all duration-300;
+  }
+
+  .card-hover {
+    @apply hover:-translate-y-1 hover:shadow-lg hover:border-wilder-500;
+  }
+
+  .character-card {
+    @apply card card-hover overflow-hidden;
+  }
+
+  .character-card.personagem:hover {
+    @apply border-wilder-500;
+  }
+
+  .character-card.monstro:hover {
+    @apply border-mystic-red;
+  }
+
+  .character-image-container {
+    @apply relative overflow-hidden aspect-square;
+  }
+
+  .character-image {
+    @apply w-full h-full object-cover transition-transform duration-300;
+  }
+
+  .character-card:hover .character-image {
+    @apply scale-105;
+  }
+
+  .character-info {
+    @apply p-4 bg-gradient-to-t from-wilder-800/95 to-wilder-800/80;
+  }
+
+  .character-info h3 {
+    @apply text-xl font-title text-wilder-100 mb-1;
+  }
+
+  .btn {
+    @apply px-4 py-2 rounded-lg font-medium transition-all duration-200
+           bg-wilder-700 text-wilder-100 hover:bg-wilder-600
+           border-2 border-wilder-600 hover:border-wilder-500
+           shadow-mystic hover:shadow-lg
+           focus:outline-none focus:ring-2 focus:ring-wilder-500 focus:ring-opacity-50;
+  }
+
+  .btn-primary {
+    @apply bg-mystic-gold border-mystic-gold/50 hover:bg-mystic-gold/80;
+  }
+
+  .btn-danger {
+    @apply bg-mystic-red border-mystic-red/50 hover:bg-mystic-red/80;
+  }
+
+  .input-field {
+    @apply w-full px-3 py-2 bg-wilder-800 border-2 border-wilder-700
+           rounded-lg text-wilder-100 placeholder-wilder-400
+           focus:outline-none focus:border-mystic-gold
+           shadow-inner-lg transition-colors duration-200;
+  }
+
+  /* Seções e Containers */
+  .section-title {
+    @apply text-2xl font-title mb-4 text-wilder-100
+           border-b-2 border-wilder-700 pb-2;
+  }
+
+  .content-container {
+    @apply container mx-auto px-4 py-6;
+  }
+
+  /* Scrollbar personalizada */
+  ::-webkit-scrollbar {
+    @apply w-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-wilder-800;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-wilder-700 rounded hover:bg-wilder-600;
+  }
+
+  /* Página de Visualização */
+  .compact-header {
+    @apply flex items-center gap-4 mb-6;
+  }
+
+  .compact-image {
+    @apply w-20 h-20 rounded-full object-cover border-2 border-blue-500;
+  }
+
+  .compact-name {
+    @apply m-0 text-wilder-100 text-2xl;
+  }
+
+  .main-columns {
+    @apply grid grid-cols-4 gap-4 mb-6;
+  }
+} 
