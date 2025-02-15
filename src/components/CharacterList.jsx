@@ -35,8 +35,8 @@ export default function CharacterList() {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section com Parallax */}
-      <div className="relative h-64 sm:h-96 mb-8 sm:mb-12 bg-wood bg-cover bg-fixed bg-center overflow-hidden">
+      {/* Hero Section */}
+      <div className="relative h-48 xs:h-64 sm:h-96 mb-6 xs:mb-8 sm:mb-12 bg-wood bg-cover bg-fixed bg-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-wilder-900/70 to-wilder-900/90" />
         <motion.div 
           className="relative container mx-auto px-4 h-full flex flex-col justify-center items-center"
@@ -45,38 +45,39 @@ export default function CharacterList() {
           transition={{ duration: 0.8 }}
         >
           <h1 
-            ref={titleRef}
-            className="text-4xl sm:text-6xl font-title text-wilder-100 mb-4 sm:mb-6 tracking-wider text-center"
+            className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-title 
+                     mb-3 xs:mb-4 sm:mb-6 tracking-wider text-center"
           >
             Wilder Feast
           </h1>
-          <p className="text-wilder-200 text-base sm:text-xl max-w-2xl mx-auto text-center mb-6 sm:mb-8 px-4">
+          <p className="text-sm xs:text-base sm:text-lg md:text-xl max-w-2xl mx-auto 
+                     text-center mb-4 xs:mb-6 sm:mb-8 px-4 text-wilder-200">
             Um mundo de mistério e perigo aguarda. Crie seus personagens e monstros 
             para explorar as profundezas da floresta selvagem.
           </p>
           <Link 
             to="/create" 
-            className="btn btn-primary flex items-center gap-2 text-base sm:text-lg 
-                     px-4 sm:px-6 py-2 sm:py-3 transform hover:scale-105 transition-transform"
+            className="btn btn-primary flex items-center gap-2 text-sm xs:text-base sm:text-lg 
+                     px-3 xs:px-4 sm:px-6 py-2 sm:py-3 transform hover:scale-105 transition-transform"
           >
-            <FiPlus className="w-5 h-5" /> Criar Nova Entidade
+            <FiPlus className="w-4 h-4 xs:w-5 xs:h-5" /> Criar Nova Entidade
           </Link>
         </motion.div>
       </div>
 
       <div className="container mx-auto px-4">
         {/* Barra de Busca e Filtros */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <div className="flex flex-col xs:flex-row justify-between items-start xs:items-center gap-3 xs:gap-4 mb-4 xs:mb-6 sm:mb-8">
           {/* Busca */}
-          <div className="w-full sm:w-auto relative">
+          <div className="w-full xs:w-auto relative">
             <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-wilder-400 w-5 h-5" />
             <input
               type="text"
               placeholder="Buscar personagens..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full sm:w-64 pl-10 pr-4 py-2 bg-wilder-800 rounded-lg
-                       text-sm sm:text-base border-2 border-wilder-700 focus:border-mystic-gold"
+              className="w-full xs:w-64 pl-10 pr-4 py-2 bg-wilder-800 rounded-lg
+                       text-sm xs:text-base border-2 border-wilder-700 focus:border-mystic-gold"
             />
           </div>
 

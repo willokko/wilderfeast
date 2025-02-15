@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://seu-usuario.github.io/wilder-feast/",
+  "homepage": "https://anthony-richard1.github.io/wilder-feast/",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
