@@ -33,6 +33,27 @@ export default function CharacterList() {
     return matchesSearch && matchesFilter
   })
 
+  // Ref para o scroll horizontal
+  const filterScrollRef = useRef(null)
+
+  // Função para lidar com o touch scroll
+  const handleTouchScroll = (e) => {
+    const element = e.currentTarget
+    let startX = e.touches[0].pageX - element.offsetLeft
+    let scrollLeft = element.scrollLeft
+
+    const handleTouchMove = (e) => {
+      const x = e.touches[0].pageX - element.offsetLeft
+      const walk = (x - startX) * 2
+      element.scrollLeft = scrollLeft - walk
+    }
+
+    element.addEventListener('touchmove', handleTouchMove)
+    element.addEventListener('touchend', () => {
+      element.removeEventListener('touchmove', handleTouchMove)
+    }, { once: true })
+  }
+
   return (
     <div className="min-h-screen max-w-full overflow-hidden">
       {/* Hero Section */}
@@ -84,42 +105,52 @@ export default function CharacterList() {
 
           {/* Filtros e Visualização */}
           <div className="flex justify-between items-center w-full">
-            {/* Filtros */}
-            <div className="flex gap-2 overflow-x-auto pb-2 max-w-[70%]">
-              <button
-                onClick={() => setFilter('todos')}
-                className={`px-3 py-1.5 rounded-full text-sm border-2 whitespace-nowrap
-                         ${filter === 'todos' 
-                           ? 'bg-mystic-gold border-mystic-gold text-wilder-900' 
-                           : 'border-wilder-700 text-wilder-200'}`}
-              >
-                Todos
-              </button>
-              <button
-                onClick={() => setFilter('personagem')}
-                className={`px-3 py-1.5 rounded-full text-sm border-2 whitespace-nowrap
-                         ${filter === 'personagem' 
-                           ? 'bg-mystic-gold border-mystic-gold text-wilder-900' 
-                           : 'border-wilder-700 text-wilder-200'}`}
-              >
-                Personagens
-              </button>
-              <button
-                onClick={() => setFilter('monstro')}
-                className={`px-3 py-1.5 rounded-full text-sm border-2 whitespace-nowrap
-                         ${filter === 'monstro' 
-                           ? 'bg-mystic-red border-mystic-red text-wilder-900' 
-                           : 'border-wilder-700 text-wilder-200'}`}
-              >
-                Monstros
-              </button>
+            {/* Filtros com touch scroll */}
+            <div 
+              ref={filterScrollRef}
+              className="flex gap-2 overflow-x-auto pb-2 max-w-[70%] hide-scrollbar touch-pan-x"
+              onTouchStart={handleTouchScroll}
+            >
+              <div className="flex gap-2 px-0.5">
+                <button
+                  onClick={() => setFilter('todos')}
+                  className={`px-3 py-1.5 rounded-full text-sm border-2 whitespace-nowrap
+                           touch-manipulation select-none active:scale-95 transition-transform
+                           ${filter === 'todos' 
+                             ? 'bg-mystic-gold border-mystic-gold text-wilder-900' 
+                             : 'border-wilder-700 text-wilder-200'}`}
+                >
+                  Todos
+                </button>
+                <button
+                  onClick={() => setFilter('personagem')}
+                  className={`px-3 py-1.5 rounded-full text-sm border-2 whitespace-nowrap
+                           touch-manipulation select-none active:scale-95 transition-transform
+                           ${filter === 'personagem' 
+                             ? 'bg-mystic-gold border-mystic-gold text-wilder-900' 
+                             : 'border-wilder-700 text-wilder-200'}`}
+                >
+                  Personagens
+                </button>
+                <button
+                  onClick={() => setFilter('monstro')}
+                  className={`px-3 py-1.5 rounded-full text-sm border-2 whitespace-nowrap
+                           touch-manipulation select-none active:scale-95 transition-transform
+                           ${filter === 'monstro' 
+                             ? 'bg-mystic-red border-mystic-red text-wilder-900' 
+                             : 'border-wilder-700 text-wilder-200'}`}
+                >
+                  Monstros
+                </button>
+              </div>
             </div>
 
             {/* Visualização */}
             <div className="flex gap-2">
               <button
                 onClick={() => setViewMode('grid')}
-                className={`p-2 rounded-lg ${
+                className={`p-2 rounded-lg touch-manipulation select-none 
+                         active:scale-95 transition-transform ${
                   viewMode === 'grid' 
                     ? 'bg-mystic-gold text-wilder-900' 
                     : 'bg-wilder-700 text-wilder-200'
@@ -129,7 +160,8 @@ export default function CharacterList() {
               </button>
               <button
                 onClick={() => setViewMode('list')}
-                className={`p-2 rounded-lg ${
+                className={`p-2 rounded-lg touch-manipulation select-none 
+                         active:scale-95 transition-transform ${
                   viewMode === 'list' 
                     ? 'bg-mystic-gold text-wilder-900' 
                     : 'bg-wilder-700 text-wilder-200'

@@ -202,4 +202,19 @@
   background: transparent;
   box-shadow: 1744px 122px #E2E8F0,134px 1321px #E2E8F0,... /* mais pontos aqui */;
   animation: animStar 150s linear infinite;
+}
+
+@layer utilities {
+  .hide-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;     /* Firefox */
+  }
+  
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari and Opera */
+  }
+
+  .touch-pan-x {
+    touch-action: pan-x;
+  }
 } 
