@@ -1,11 +1,11 @@
-import { BrowserRouter } from 'react-router-dom'
+import { BrowserRouter as Router } from 'react-router-dom'
 import { CharacterProvider } from './contexts/CharacterContext'
 import AppRoutes from './routes'
 import Header from './components/Header'
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <Router basename="/wilder-feast">
       <CharacterProvider>
         <div className="min-h-screen bg-wilder-900">
           <Header />
@@ -14,6 +14,6 @@ export default function App() {
           </main>
         </div>
       </CharacterProvider>
-    </BrowserRouter>
+    </Router>
   )
 }
