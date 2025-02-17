@@ -1,15 +1,16 @@
-import { useEffect, useRef, useState } from 'react'
-import { useNavigate, useParams, Link } from 'react-router-dom'
+import { useEffect, useRef } from 'react'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useCharacters } from '../contexts/CharacterContext'
+import { FiArrowLeft, FiEdit3, FiTrash2 } from 'react-icons/fi'
 import { gsap } from 'gsap'
+import StatGrid from './shared/StatGrid'
 
 export default function ViewCharacter() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { characters } = useCharacters()
+  const { characters, deleteCharacter } = useCharacters()
   const containerRef = useRef(null)
-  const [diceResults, setDiceResults] = useState(null)
-
+  
   const character = characters[id]
 
   useEffect(() => {
@@ -18,214 +19,131 @@ export default function ViewCharacter() {
       return
     }
 
+    // Animações de entrada
     const tl = gsap.timeline()
-
-    // Animação da imagem e nome
     tl.from(".character-header", {
       y: -50,
       opacity: 0,
-      duration: 0.8,
+      duration: 0.6,
       ease: "power3.out"
     })
-
-    // Animação das estatísticas
-    tl.from(".stat-item", {
-      x: -30,
+    .from(".stat-section", {
+      y: 30,
       opacity: 0,
-      duration: 0.5,
+      duration: 0.4,
       stagger: 0.1,
       ease: "power2.out"
-    }, "-=0.4")
-
-    // Animação das habilidades
-    tl.from(".skill-item", {
-      y: 20,
-      opacity: 0,
-      duration: 0.5,
-      stagger: 0.05,
-      ease: "back.out(1.7)"
-    }, "-=0.2")
-
+    }, "-=0.3")
   }, [character, navigate])
 
-  const handleRollDice = (statName, value) => {
-    const results = []
-    for (let i = 0; i < value; i++) {
-      results.push(Math.floor(Math.random() * 6) + 1)
+  const handleDelete = () => {
+    if (window.confirm('Tem certeza que deseja excluir este personagem?')) {
+      deleteCharacter(id)
+      navigate('/')
     }
-    const d8Result = Math.floor(Math.random() * 8) + 1
-    
-    setDiceResults({
-      statName,
-      d6Results: results,
-      d8Result,
-      total: results.reduce((a, b) => a + b, 0) + d8Result
-    })
-
-    // Animação dos resultados dos dados
-    gsap.from(".dice-result", {
-      scale: 0,
-      rotation: 360,
-      opacity: 0,
-      duration: 0.5,
-      stagger: 0.1,
-      ease: "back.out(1.7)"
-    })
   }
 
   if (!character) return null
 
   return (
     <div ref={containerRef} className="container mx-auto px-4 py-6 sm:py-8">
-      {/* Cabeçalho do Personagem */}
-      <div className="character-header flex flex-col sm:flex-row items-center gap-4 sm:gap-6 mb-6 sm:mb-8 
-                    bg-wilder-800 p-4 sm:p-6 rounded-lg shadow-mystic">
-        <img 
-          src={character.imagem} 
-          alt={character.nome} 
-          className="w-24 h-24 sm:w-32 sm:h-32 rounded-full object-cover border-4 border-wilder-600"
-        />
-        <div className="flex-1 text-center sm:text-left">
-          <h1 className="text-3xl sm:text-4xl font-title mb-2">{character.nome}</h1>
-          <p className="text-wilder-300 text-base sm:text-lg">
-            {character.tipo === 'personagem' ? 'Personagem' : 'Monstro'}
-          </p>
-        </div>
-        <div className="flex gap-2 sm:gap-4">
-          <Link 
-            to={`/edit/${id}`} 
-            className="btn btn-primary text-sm sm:text-base px-3 sm:px-4 py-2"
-          >
-            Editar
-          </Link>
-          <Link 
-            to="/" 
-            className="btn text-sm sm:text-base px-3 sm:px-4 py-2"
-          >
-            Voltar
-          </Link>
-        </div>
-      </div>
-
-      {/* Grid Principal */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Coluna de Estatísticas */}
-        <div className="space-y-6">
-          <div className="card p-6">
-            <h2 className="section-title">Estilos</h2>
-            <div className="space-y-4">
-              {Object.entries(character.estilos).map(([key, value]) => (
-                <div key={key} className="stat-item flex items-center justify-between">
-                  <span className="text-wilder-200 capitalize">{key}</span>
-                  <div className="flex items-center gap-3">
-                    <span className="text-2xl font-title">{value}</span>
-                    <button
-                      onClick={() => handleRollDice(key, value)}
-                      className="btn btn-primary text-sm px-3 py-1"
-                    >
-                      Rolar
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="card p-6">
-            <h2 className="section-title">Habilidades</h2>
-            <div className="grid grid-cols-2 gap-4">
-              {Object.entries(character.habilidades).map(([key, value]) => (
-                <div key={key} className="skill-item">
-                  <span className="text-wilder-200 block capitalize text-sm mb-1">{key}</span>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xl font-title">{value}</span>
-                    <button
-                      onClick={() => handleRollDice(key, value)}
-                      className="btn btn-primary text-sm px-2 py-1"
-                    >
-                      Rolar
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Coluna Central */}
-        <div className="space-y-6">
-          <div className="card p-6">
-            <h2 className="section-title">Traços</h2>
-            <div className="space-y-4">
-              {character.tracos.map((traco, index) => (
-                <div key={index} className="bg-wilder-700/50 p-4 rounded-lg">
-                  <h3 className="font-title text-lg mb-2">{traco.nome}</h3>
-                  <p className="text-wilder-200">{traco.descricao}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Coluna de Equipamento/Partes */}
-        <div className="space-y-6">
-          <div className="card p-6">
-            <h2 className="section-title">
-              {character.tipo === 'personagem' ? 'Utensílio' : 'Partes'}
-            </h2>
-            {character.tipo === 'personagem' ? (
-              <div className="bg-wilder-700/50 p-4 rounded-lg">
-                <h3 className="font-title text-lg mb-2">{character.utensilio.nome}</h3>
-                <p className="text-wilder-300 mb-2">
-                  Resistência: {character.utensilio.resistencia}
-                </p>
-                <p className="text-wilder-200">{character.utensilio.descricao}</p>
-              </div>
+      {/* Cabeçalho */}
+      <div className="character-header bg-wilder-800 rounded-lg p-6 mb-8 shadow-mystic">
+        <div className="flex flex-col md:flex-row items-center gap-6">
+          <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-wilder-700">
+            {character.imagem ? (
+              <img 
+                src={character.imagem} 
+                alt={character.nome}
+                className="w-full h-full object-cover"
+              />
             ) : (
-              <div className="space-y-4">
-                {character.partes.map((parte, index) => (
-                  <div key={index} className="bg-wilder-700/50 p-4 rounded-lg">
-                    <h3 className="font-title text-lg mb-2">{parte.nome}</h3>
-                    <p className="text-wilder-300 mb-2">
-                      Resistência: {parte.resistencia}
-                    </p>
-                    <p className="text-wilder-200">{parte.descricao}</p>
-                  </div>
-                ))}
+              <div className="w-full h-full bg-wilder-700 flex items-center justify-center">
+                <FiEdit3 className="w-8 h-8 text-wilder-500" />
               </div>
             )}
           </div>
+          
+          <div className="flex-1 text-center md:text-left">
+            <h1 className="text-4xl font-title mb-2">{character.nome}</h1>
+            <p className="text-wilder-300 text-lg capitalize mb-4">{character.tipo}</p>
+            {character.descricao && (
+              <p className="text-wilder-200 max-w-2xl">{character.descricao}</p>
+            )}
+          </div>
+
+          <div className="flex gap-3">
+            <Link 
+              to={`/edit/${id}`}
+              className="btn btn-primary flex items-center gap-2"
+            >
+              <FiEdit3 /> Editar
+            </Link>
+            <button
+              onClick={handleDelete}
+              className="btn btn-danger flex items-center gap-2"
+            >
+              <FiTrash2 /> Excluir
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Resultados dos Dados */}
-      {diceResults && (
-        <div className="fixed bottom-8 right-8 bg-wilder-800 p-6 rounded-lg shadow-mystic border-2 border-wilder-700">
-          <h3 className="text-xl font-title mb-4">
-            Rolagem de {diceResults.statName}
-          </h3>
-          <div className="flex flex-wrap gap-2 mb-4">
-            {diceResults.d6Results.map((result, i) => (
-              <div 
-                key={i} 
-                className="dice-result w-12 h-12 flex items-center justify-center 
-                         bg-wilder-700 rounded-lg font-bold text-xl"
-              >
-                {result}
-              </div>
-            ))}
-            <div 
-              className="dice-result w-12 h-12 flex items-center justify-center 
-                       bg-mystic-gold rounded-lg font-bold text-xl"
-            >
-              {diceResults.d8Result}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Estilos */}
+        <div className="stat-section">
+          <StatGrid
+            title="Estilos"
+            stats={character.estilos}
+            className="h-full"
+          />
+        </div>
+
+        {/* Habilidades */}
+        <div className="stat-section">
+          <StatGrid
+            title="Habilidades"
+            stats={character.habilidades}
+            className="h-full"
+          />
+        </div>
+      </div>
+
+      {/* Traços */}
+      {character.tracos?.length > 0 && (
+        <div className="stat-section mt-6">
+          <div className="bg-wilder-800 rounded-lg p-6 shadow-mystic">
+            <h2 className="text-2xl font-title text-mystic-gold mb-4">Traços</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {character.tracos.map((traco, index) => (
+                <div 
+                  key={index}
+                  className="bg-wilder-700/50 p-4 rounded-lg"
+                >
+                  <h3 className="text-lg font-title text-wilder-100 mb-2">{traco.nome}</h3>
+                  <p className="text-wilder-300">{traco.descricao}</p>
+                  {character.tipo === 'monstro' && (
+                    <div className="mt-2 flex items-center gap-2">
+                      <span className="text-wilder-400">Resistência:</span>
+                      <span className="text-mystic-gold font-medium">{traco.resistencia}</span>
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
-          <p className="text-xl font-bold text-center">
-            Total: {diceResults.total}
-          </p>
         </div>
       )}
+
+      {/* Botão Voltar */}
+      <div className="mt-8">
+        <Link 
+          to="/"
+          className="btn flex items-center gap-2 text-wilder-300 hover:text-wilder-100"
+        >
+          <FiArrowLeft /> Voltar para Lista
+        </Link>
+      </div>
     </div>
   )
 } 

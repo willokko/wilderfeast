@@ -1,33 +1,44 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext } from 'react'
+import { useLocalStorage } from '../hooks/useLocalStorage'
 
 const CharacterContext = createContext()
 
 export function CharacterProvider({ children }) {
-  const [characters, setCharacters] = useState([])
+  const [characters, setCharacters] = useLocalStorage('wilder-feast-characters', {})
 
   const addCharacter = (character) => {
-    setCharacters(prev => [...prev, character])
+    const id = Date.now().toString()
+    setCharacters(prev => ({
+      ...prev,
+      [id]: { ...character, id }
+    }))
+    return id
   }
 
-  const updateCharacter = (index, character) => {
+  const updateCharacter = (id, updatedCharacter) => {
+    setCharacters(prev => ({
+      ...prev,
+      [id]: { ...updatedCharacter, id }
+    }))
+  }
+
+  const deleteCharacter = (id) => {
     setCharacters(prev => {
-      const newCharacters = [...prev]
-      newCharacters[index] = character
+      const newCharacters = { ...prev }
+      delete newCharacters[id]
       return newCharacters
     })
   }
 
-  const deleteCharacter = (index) => {
-    setCharacters(prev => prev.filter((_, i) => i !== index))
+  const value = {
+    characters,
+    addCharacter,
+    updateCharacter,
+    deleteCharacter
   }
 
   return (
-    <CharacterContext.Provider value={{ 
-      characters, 
-      addCharacter, 
-      updateCharacter, 
-      deleteCharacter 
-    }}>
+    <CharacterContext.Provider value={value}>
       {children}
     </CharacterContext.Provider>
   )

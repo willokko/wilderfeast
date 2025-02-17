@@ -78,8 +78,10 @@ export default function EditCharacter() {
     const formData = new FormData(e.target)
     
     const updatedCharacter = {
-      tipo: formData.get('tipo'),
+      ...character,
       nome: formData.get('nome'),
+      tipo: formData.get('tipo'),
+      descricao: formData.get('descricao'),
       imagem: imagePreview || formData.get('imagemUrl'),
       estilos: {
         poderoso: parseInt(formData.get('poderoso')) || 0,

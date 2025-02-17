@@ -1,12 +1,20 @@
-export default function CharacterCard({ character, viewMode }) {
+import { Link } from 'react-router-dom'
+import { FiFilter } from 'react-icons/fi'
+
+export default function CharacterCard({ character, viewMode, onClick }) {
+  const handleClick = (e) => {
+    e.preventDefault()
+    onClick?.(e, character)
+  }
+
   return (
-    <Link 
-      to={`/view/${character.id}`}
+    <div 
+      onClick={handleClick}
       className={`character-card ${character.tipo} ${
         viewMode === 'list' 
           ? 'flex items-center p-2' 
           : 'block'
-      }`}
+      } cursor-pointer`}
     >
       <div className={
         viewMode === 'list'
@@ -33,6 +41,6 @@ export default function CharacterCard({ character, viewMode }) {
         <h3 className="text-base font-title text-wilder-100 line-clamp-1">{character.nome}</h3>
         <p className="text-sm text-wilder-300 capitalize">{character.tipo}</p>
       </div>
-    </Link>
+    </div>
   )
 } 
