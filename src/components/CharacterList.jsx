@@ -20,6 +20,7 @@ import {
 } from 'react-icons/fi'
 import ParticlesBackground from './ParticlesBackground'
 import ImportExportCharacters from './ImportExportCharacters'
+import CharacterCard from './CharacterCard'
 
 export default function CharacterList() {
   const { characters } = useCharacters()
@@ -31,10 +32,9 @@ export default function CharacterList() {
   const [viewMode, setViewMode] = useState('grid')
   const [selectedCharacter, setSelectedCharacter] = useState(null)
 
-  const characterArray = Object.entries(characters).map(([id, char]) => ({
-    ...char,
-    id // Garantindo que cada personagem tenha seu ID
-  }))
+  const characterArray = Array.isArray(characters) 
+    ? characters 
+    : Object.values(characters)
 
   const filteredCharacters = characterArray.filter(char => {
     const matchesSearch = char.nome?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -143,113 +143,102 @@ export default function CharacterList() {
           </div>
 
           {/* Filtros e Visualização */}
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="flex justify-between items-center w-full">
             {/* Filtros com touch scroll */}
             <div 
               ref={filterScrollRef}
-              className="flex gap-3 overflow-x-auto pb-2 hide-scrollbar touch-pan-x w-full sm:w-auto"
+              className="flex gap-2 overflow-x-auto pb-2 max-w-[70%] hide-scrollbar touch-pan-x"
               onTouchStart={handleTouchScroll}
             >
-              <button
-                onClick={() => setFilter('todos')}
-                className={`px-4 py-2 rounded-lg text-sm whitespace-nowrap
-                         transition-all duration-200 flex-shrink-0
-                         ${filter === 'todos' 
-                           ? 'bg-mystic-gold text-wilder-900 border-2 border-mystic-gold' 
-                           : 'bg-wilder-800 text-wilder-200 border-2 border-wilder-700 hover:bg-wilder-700'}`}
-              >
-                Todos
-              </button>
-              <button
-                onClick={() => setFilter('personagem')}
-                className={`px-4 py-2 rounded-lg text-sm whitespace-nowrap
-                         transition-all duration-200 flex-shrink-0
-                         ${filter === 'personagem' 
-                           ? 'bg-mystic-gold text-wilder-900 border-2 border-mystic-gold' 
-                           : 'bg-wilder-800 text-wilder-200 border-2 border-wilder-700 hover:bg-wilder-700'}`}
-              >
-                Personagens
-              </button>
-              <button
-                onClick={() => setFilter('monstro')}
-                className={`px-4 py-2 rounded-lg text-sm whitespace-nowrap
-                         transition-all duration-200 flex-shrink-0
-                         ${filter === 'monstro' 
-                           ? 'bg-mystic-red text-wilder-900 border-2 border-mystic-red' 
-                           : 'bg-wilder-800 text-wilder-200 border-2 border-wilder-700 hover:bg-wilder-700'}`}
-              >
-                Monstros
-              </button>
+              <div className="flex gap-2 px-0.5">
+                <button
+                  onClick={() => setFilter('todos')}
+                  className={`px-3 py-1.5 rounded-full text-sm border-2 whitespace-nowrap
+                           touch-manipulation select-none active:scale-95 transition-transform
+                           ${filter === 'todos' 
+                             ? 'bg-mystic-gold border-mystic-gold text-wilder-900' 
+                             : 'border-wilder-700 text-wilder-200'}`}
+                >
+                  Todos
+                </button>
+                <button
+                  onClick={() => setFilter('personagem')}
+                  className={`px-3 py-1.5 rounded-full text-sm border-2 whitespace-nowrap
+                           touch-manipulation select-none active:scale-95 transition-transform
+                           ${filter === 'personagem' 
+                             ? 'bg-mystic-gold border-mystic-gold text-wilder-900' 
+                             : 'border-wilder-700 text-wilder-200'}`}
+                >
+                  Personagens
+                </button>
+                <button
+                  onClick={() => setFilter('monstro')}
+                  className={`px-3 py-1.5 rounded-full text-sm border-2 whitespace-nowrap
+                           touch-manipulation select-none active:scale-95 transition-transform
+                           ${filter === 'monstro' 
+                             ? 'bg-mystic-red border-mystic-red text-wilder-900' 
+                             : 'border-wilder-700 text-wilder-200'}`}
+                >
+                  Monstros
+                </button>
+              </div>
             </div>
 
             {/* Visualização */}
             <div className="flex gap-2">
-              <button
-                onClick={() => setViewMode('grid')}
-                className={`p-2 rounded-lg transition-all duration-200
-                         ${viewMode === 'grid' 
-                           ? 'bg-mystic-gold text-wilder-900' 
-                           : 'bg-wilder-800 text-wilder-200 hover:bg-wilder-700'}`}
-              >
-                <FiGrid className="w-5 h-5" />
-              </button>
-              <button
-                onClick={() => setViewMode('list')}
-                className={`p-2 rounded-lg transition-all duration-200
-                         ${viewMode === 'list' 
-                           ? 'bg-mystic-gold text-wilder-900' 
-                           : 'bg-wilder-800 text-wilder-200 hover:bg-wilder-700'}`}
-              >
-                <FiList className="w-5 h-5" />
-              </button>
+              {['grid', 'list'].map((mode) => (
+                <button
+                  key={mode}
+                  onClick={() => setViewMode(mode)}
+                  className={`p-2 rounded-lg touch-manipulation select-none 
+                           active:scale-95 transition-transform
+                           ${viewMode === mode 
+                             ? 'bg-mystic-gold text-wilder-900' 
+                             : 'bg-wilder-700 text-wilder-200'}`}
+                >
+                  {mode === 'grid' ? <FiGrid className="w-5 h-5" /> : <FiList className="w-5 h-5" />}
+                </button>
+              ))}
             </div>
           </div>
         </div>
 
         {/* Characters Grid/List */}
-        <div className={
-          viewMode === 'grid'
-            ? "grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-            : "flex flex-col gap-4"
-        }>
+        <div className={`
+          w-full
+          ${viewMode === 'grid' 
+            ? 'character-grid' 
+            : 'flex flex-col gap-4'
+          }
+        `}>
+          {/* Personagens existentes */}
           {filteredCharacters.map(character => (
-            <motion.div 
+            <CharacterCard
               key={character.id}
-              layout
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              onClick={(e) => handleCharacterClick(e, character)}
-              className={`
-                character-card cursor-pointer
-                ${character.tipo === 'monstro' ? 'monstro' : 'personagem'}
-              `}
+              character={character}
+              viewMode={viewMode}
+              onClick={handleCharacterClick}
+            />
+          ))}
+          
+          {/* Slots vazios - sempre mostra até completar 8 slots */}
+          {viewMode === 'grid' && Array.from({ length: Math.max(0, 8 - filteredCharacters.length) }).map((_, index) => (
+            <div 
+              key={`empty-${index}`}
+              className="aspect-square rounded-lg border-2 border-dashed border-wilder-700/30 
+                       bg-wilder-800/20 flex items-center justify-center
+                       transition-all duration-200 hover:border-mystic-gold/30 hover:bg-wilder-800/30"
             >
-              <div className={
-                viewMode === 'list'
-                  ? "w-16 h-16 flex-shrink-0"
-                  : "aspect-square w-full"
-              }>
-                {character.imagem ? (
-                  <img 
-                    src={character.imagem} 
-                    alt={character.nome}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-wilder-700">
-                    <FiFilter className="w-6 h-6 text-wilder-500" />
-                  </div>
-                )}
-              </div>
-              <div className={`p-3 ${viewMode === 'list' ? 'flex-1' : ''}`}>
-                <h3 className="text-base font-title text-wilder-100 line-clamp-1">
-                  {character.nome}
-                </h3>
-                <p className="text-sm text-wilder-300 capitalize">
-                  {character.tipo}
+              <Link 
+                to="/create"
+                className="text-center p-4 w-full h-full flex flex-col items-center justify-center"
+              >
+                <FiPlus className="w-8 h-8 mb-2 text-wilder-700/50" />
+                <p className="text-sm text-wilder-700/50">
+                  Criar Personagem
                 </p>
-              </div>
-            </motion.div>
+              </Link>
+            </div>
           ))}
         </div>
       </div>

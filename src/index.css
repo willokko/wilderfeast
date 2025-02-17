@@ -34,7 +34,8 @@
 
   .character-card {
     @apply bg-wilder-800 rounded-lg overflow-hidden border-2 border-wilder-700
-           transition-all duration-200 hover:border-mystic-gold hover:shadow-lg;
+           transition-all duration-200 hover:border-mystic-gold hover:shadow-lg
+           w-full h-full;
   }
 
   .character-card.personagem:hover {
@@ -216,5 +217,33 @@
 
   .touch-pan-x {
     touch-action: pan-x;
+  }
+
+  .character-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4;
+  }
+}
+
+/* Força a aplicação do grid */
+.grid {
+  display: grid !important;
+}
+
+/* Força os breakpoints do grid */
+@media (min-width: 640px) {
+  .sm\:grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .lg\:grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (min-width: 1280px) {
+  .xl\:grid-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
   }
 } 
