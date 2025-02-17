@@ -5,6 +5,8 @@ import { gsap } from 'gsap'
 import StatGrid from './shared/StatGrid'
 import TraitsList from './shared/TraitsList'
 import { Link } from 'react-router-dom'
+import { tracos as tracosDisponiveis } from '../data/tracos'
+import { FiPlus, FiX, FiImage, FiUpload, FiCheck, FiTrash2 } from 'react-icons/fi'
 
 export default function EditCharacter() {
   const { id } = useParams()
@@ -19,6 +21,7 @@ export default function EditCharacter() {
   const [tracos, setTracos] = useState(character?.tracos || [])
   const [partes, setPartes] = useState(character?.partes || [])
   const [imagePreview, setImagePreview] = useState(character?.imagem || '')
+  const [showTracoSelector, setShowTracoSelector] = useState(false)
 
   useEffect(() => {
     if (!character) {
@@ -127,33 +130,46 @@ export default function EditCharacter() {
     }
   }
 
+  const handleAddTraco = (novoTraco) => {
+    const characterTracos = character.tracos || []
+    if (!characterTracos.find(t => t.id === novoTraco.id)) {
+      const updatedCharacter = {
+        ...character,
+        tracos: [...characterTracos, novoTraco]
+      }
+      updateCharacter(id, updatedCharacter)
+    }
+    setShowTracoSelector(false)
+  }
+
   if (!character) return null
 
   return (
     <div className="container mx-auto px-4 py-6 sm:py-8">
       <div 
         ref={headerRef}
-        className="mb-6 sm:mb-8 bg-wilder-800 p-4 sm:p-6 rounded-lg shadow-mystic text-center"
+        className="mb-8 bg-wilder-800/80 p-6 rounded-lg shadow-mystic backdrop-blur-sm"
       >
-        <h1 className="text-3xl sm:text-4xl font-title mb-3 sm:mb-4">
+        <h1 className="text-4xl font-title mb-3">
           Editar {tipo === 'personagem' ? 'Personagem' : 'Monstro'}
         </h1>
-        <p className="text-wilder-300 text-sm sm:text-lg max-w-2xl mx-auto">
+        <p className="text-wilder-300 text-lg max-w-2xl">
           Modifique os detalhes do seu {tipo === 'personagem' ? 'personagem' : 'monstro'} abaixo.
         </p>
       </div>
 
-      <form ref={formRef} onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
-        <div className="card p-4 sm:p-6">
-          <h2 className="section-title text-xl sm:text-2xl mb-4 sm:mb-6">Informações Básicas</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+      <form ref={formRef} onSubmit={handleSubmit} className="space-y-8">
+        {/* Informações Básicas */}
+        <div className="card p-6">
+          <h2 className="section-title mb-6">Informações Básicas</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="form-field">
               <label className="block text-wilder-200 mb-2">Tipo</label>
               <select
                 name="tipo"
                 value={tipo}
                 onChange={(e) => setTipo(e.target.value)}
-                className="input-field text-sm sm:text-base"
+                className="input-field text-base"
               >
                 <option value="personagem">Personagem</option>
                 <option value="monstro">Monstro</option>
@@ -166,147 +182,152 @@ export default function EditCharacter() {
                 type="text"
                 name="nome"
                 defaultValue={character.nome}
-                required
-                className="input-field text-sm sm:text-base"
+                className="input-field"
                 placeholder="Nome do personagem"
               />
             </div>
-          </div>
 
-          {/* Upload de Imagem */}
-          <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="form-field">
-              <label className="block text-wilder-200 mb-2">Imagem</label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
+            <div className="form-field md:col-span-2">
+              <label className="block text-wilder-200 mb-2">Descrição</label>
+              <textarea
+                name="descricao"
+                defaultValue={character.descricao}
                 className="input-field"
-              />
-              <input
-                type="text"
-                name="imagemUrl"
-                defaultValue={character.imagem}
-                placeholder="Ou cole a URL da imagem"
-                className="input-field mt-2"
+                placeholder="Descreva seu personagem..."
+                rows={3}
               />
             </div>
 
-            {imagePreview && (
-              <div className="image-preview">
-                <img
-                  src={imagePreview}
-                  alt="Preview"
-                  className="w-32 h-32 rounded-lg object-cover mx-auto border-2 border-wilder-700"
-                />
+            <div className="form-field md:col-span-2">
+              <label className="block text-wilder-200 mb-2">Imagem</label>
+              <div className="flex items-start gap-4">
+                <div className="relative group">
+                  <div className="w-32 h-32 rounded-lg overflow-hidden border-2 border-wilder-700 bg-wilder-800">
+                    {imagePreview ? (
+                      <img 
+                        src={imagePreview} 
+                        alt={character.nome}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <FiImage className="w-8 h-8 text-wilder-500" />
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <label className="cursor-pointer text-white flex flex-col items-center">
+                        <FiUpload className="w-6 h-6 mb-2" />
+                        <span className="text-sm">Alterar</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageChange}
+                          className="hidden"
+                        />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <input
+                    type="text"
+                    name="imagemUrl"
+                    placeholder="Ou cole uma URL de imagem..."
+                    className="input-field mb-2"
+                    defaultValue={character.imagem}
+                  />
+                  <p className="text-sm text-wilder-400">
+                    Formatos suportados: JPG, PNG, GIF. Tamanho máximo: 5MB
+                  </p>
+                </div>
               </div>
-            )}
+            </div>
           </div>
         </div>
 
         {/* Estilos */}
         <div className="card p-6">
-          <h2 className="section-title">Estilos</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-            {['poderoso', 'ligeiro', 'preciso', 'capcioso'].map(estilo => (
-              <div key={estilo} className="form-field">
-                <label className="block text-wilder-200 mb-2 capitalize">
-                  {estilo}
-                </label>
-                <input
-                  type="number"
-                  name={estilo}
-                  min="0"
-                  max="5"
-                  defaultValue={character.estilos[estilo]}
-                  className="input-field"
-                />
-              </div>
-            ))}
-          </div>
+          <h2 className="section-title mb-6">Estilos</h2>
+          <StatGrid
+            stats={character.estilos}
+            onStatClick={(key, value) => {
+              setFormData(prev => ({
+                ...prev,
+                estilos: { ...prev.estilos, [key]: value }
+              }))
+            }}
+            isEditing={true}
+          />
         </div>
 
         {/* Habilidades */}
         <div className="card p-6">
-          <h2 className="section-title">Habilidades</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              'agarrao', 'armazenamento', 'assegurar', 'busca',
-              'chamado', 'cura', 'exibicao', 'golpe',
-              'manufatura', 'estudo', 'tiro', 'travessia'
-            ].map(habilidade => (
-              <div key={habilidade} className="form-field">
-                <label className="block text-wilder-200 mb-2 capitalize">
-                  {habilidade}
-                </label>
-                <input
-                  type="number"
-                  name={habilidade}
-                  min="0"
-                  max="5"
-                  defaultValue={character.habilidades[habilidade]}
-                  className="input-field"
-                />
-              </div>
-            ))}
-          </div>
+          <h2 className="section-title mb-6">Habilidades</h2>
+          <StatGrid
+            stats={character.habilidades}
+            onStatClick={(key, value) => {
+              setFormData(prev => ({
+                ...prev,
+                habilidades: { ...prev.habilidades, [key]: value }
+              }))
+            }}
+            isEditing={true}
+          />
         </div>
 
         {/* Traços */}
         <div className="card p-6">
-          <h2 className="section-title">Traços</h2>
           <div className="space-y-4">
-            {tracos.map((traco, index) => (
-              <div key={index} className="form-field bg-wilder-700/50 p-4 rounded-lg">
-                <div className="flex justify-between items-start mb-4">
-                  <h3 className="text-lg font-title">Traço {index + 1}</h3>
-                  {index > 0 && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const newTracos = [...tracos]
-                        newTracos.splice(index, 1)
-                        setTracos(newTracos)
-                      }}
-                      className="btn btn-danger text-sm"
-                    >
-                      Remover
-                    </button>
-                  )}
-                </div>
-                <div className="space-y-4">
-                  <input
-                    type="text"
-                    value={traco.nome}
-                    onChange={(e) => {
-                      const newTracos = [...tracos]
-                      newTracos[index] = { ...traco, nome: e.target.value }
-                      setTracos(newTracos)
-                    }}
-                    className="input-field"
-                    placeholder="Nome do traço"
-                  />
-                  <textarea
-                    value={traco.descricao}
-                    onChange={(e) => {
-                      const newTracos = [...tracos]
-                      newTracos[index] = { ...traco, descricao: e.target.value }
-                      setTracos(newTracos)
-                    }}
-                    className="input-field"
-                    placeholder="Descrição do traço"
-                    rows={2}
-                  />
-                </div>
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-title text-mystic-gold">Traços</h3>
+              <button
+                type="button"
+                onClick={() => setShowTracoSelector(true)}
+                className="btn btn-primary"
+              >
+                <FiPlus /> Adicionar Novo Traço
+              </button>
+            </div>
+
+            {character.tracos?.map((traco, index) => (
+              <div key={index} className="card p-4">
+                <h4 className="text-lg font-title text-mystic-gold mb-2">{traco.nome}</h4>
+                <p className="text-wilder-200">{traco.descricao}</p>
               </div>
             ))}
-            <button
-              type="button"
-              onClick={() => setTracos([...tracos, { nome: '', descricao: '' }])}
-              className="btn btn-primary w-full"
-            >
-              Adicionar Traço
-            </button>
+
+            {showTracoSelector && (
+              <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+                <div className="bg-wilder-800 rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-xl font-title">Adicionar Novo Traço</h3>
+                    <button
+                      onClick={() => setShowTracoSelector(false)}
+                      className="p-1 hover:bg-wilder-700 rounded-lg"
+                    >
+                      <FiX className="w-6 h-6" />
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {tracosDisponiveis
+                      .filter(t => !character.tracos?.find(ct => ct.id === t.id))
+                      .map(traco => (
+                        <div
+                          key={traco.id}
+                          onClick={() => handleAddTraco(traco)}
+                          className="card p-4 cursor-pointer hover:bg-wilder-700"
+                        >
+                          <h4 className="text-lg font-title text-mystic-gold mb-2">
+                            {traco.nome}
+                          </h4>
+                          <p className="text-wilder-200 text-sm">{traco.descricao}</p>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -410,17 +431,26 @@ export default function EditCharacter() {
         </div>
 
         <div className="flex flex-col sm:flex-row justify-between gap-4">
-          <Link 
-            to={`/view/${id}`}
-            className="btn w-full sm:w-auto order-2 sm:order-1"
-          >
-            Cancelar
-          </Link>
+          <div className="flex gap-3 order-2 sm:order-1">
+            <Link 
+              to={`/view/${id}`}
+              className="btn w-full sm:w-auto"
+            >
+              Cancelar
+            </Link>
+            <button
+              type="button"
+              onClick={handleDelete}
+              className="btn btn-danger w-full sm:w-auto flex items-center gap-2"
+            >
+              <FiTrash2 /> Excluir
+            </button>
+          </div>
           <button 
             type="submit" 
-            className="btn btn-primary w-full sm:w-auto order-1 sm:order-2"
+            className="btn btn-primary w-full sm:w-auto order-1 sm:order-2 flex items-center gap-2"
           >
-            Salvar Alterações
+            <FiCheck /> Salvar Alterações
           </button>
         </div>
       </form>

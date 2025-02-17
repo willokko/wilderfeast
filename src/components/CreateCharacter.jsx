@@ -11,11 +11,13 @@ import {
   FiX,
   FiCheck,
   FiFilter,
-  FiRefreshCw
+  FiRefreshCw,
+  FiSearch
 } from 'react-icons/fi'
 import NumberInput from './shared/NumberInput'
 import CharacterPreview from './shared/CharacterPreview'
 import StatGrid from './shared/StatGrid'
+import { tracos } from '../data/tracos'
 
 export default function CreateCharacter() {
   const navigate = useNavigate()
@@ -58,6 +60,9 @@ export default function CreateCharacter() {
   const [estilosPoints, setEstilosPoints] = useState(3)
   const [habilidadesPoints, setHabilidadesPoints] = useState(3)
   const [extraPoints, setExtraPoints] = useState(0)
+  const [selectedTracos, setSelectedTracos] = useState([])
+  const maxTracos = 2
+  const [tracoSearch, setTracoSearch] = useState('')
 
   const emptyTrait = () => ({
     nome: '',
@@ -106,6 +111,7 @@ export default function CreateCharacter() {
       try {
         const newCharacter = {
           ...formData,
+          tracos: selectedTracos,
           id: Date.now().toString(),
           createdAt: new Date().toISOString()
         }
@@ -261,6 +267,14 @@ export default function CreateCharacter() {
         updateFormData('imagem', reader.result)
       }
       reader.readAsDataURL(file)
+    }
+  }
+
+  const handleTracoSelect = (traco) => {
+    if (selectedTracos.find(t => t.id === traco.id)) {
+      setSelectedTracos(prev => prev.filter(t => t.id !== traco.id))
+    } else if (selectedTracos.length < maxTracos) {
+      setSelectedTracos(prev => [...prev, traco])
     }
   }
 
@@ -459,93 +473,152 @@ export default function CreateCharacter() {
       case 4:
         return (
           <div className="form-section space-y-8">
-            <h2 className="section-title">
-              {formData.tipo === 'personagem' ? 'Traços e Descrição' : 'Partes'}
-            </h2>
-
-            {/* Descrição do Personagem */}
-            {formData.tipo === 'personagem' && (
-              <div className="card p-6">
-                <label className="block text-wilder-200 mb-2">Descrição do Personagem</label>
-                <textarea
-                  value={formData.descricao || ''}
-                  onChange={(e) => updateFormData('descricao', e.target.value)}
-                  className="input-field w-full min-h-[120px]"
-                  placeholder="Descreva a história e personalidade do seu personagem..."
-                  rows={4}
-                />
+            <div className="flex justify-between items-center">
+              <h2 className="section-title">Traços</h2>
+              <div className="flex items-center gap-4">
+                <span className="text-wilder-300 bg-wilder-800 px-4 py-2 rounded-lg">
+                  Selecionados: <span className="text-mystic-gold">{selectedTracos.length}</span>/<span className="text-mystic-gold">{maxTracos}</span>
+                </span>
+                {selectedTracos.length > 0 && (
+                  <button
+                    onClick={() => setSelectedTracos([])}
+                    className="btn btn-danger flex items-center gap-2"
+                  >
+                    <FiX className="w-4 h-4" /> Limpar Seleção
+                  </button>
+                )}
               </div>
-            )}
+            </div>
 
-            {/* Traços/Partes */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-title text-mystic-gold">
-                {formData.tipo === 'personagem' ? 'Traços' : 'Partes'}
-              </h3>
-
-              {formData.tracos.map((traco, index) => (
-                <div key={index} className="card p-6">
-                  <div className="flex justify-between items-center mb-4">
-                    <h4 className="text-lg font-title text-mystic-gold">
-                      {formData.tipo === 'personagem' ? `Traço ${index + 1}` : `Parte ${index + 1}`}
-                    </h4>
-                    {index > 0 && (
-                      <button
-                        type="button"
-                        onClick={() => handleTracoRemove(index)}
-                        className="btn btn-danger"
-                      >
-                        Remover
-                      </button>
-                    )}
-                  </div>
-
-                  <div className="space-y-4">
-                    <div className="form-field">
-                      <label className="block text-wilder-200 mb-2">Nome</label>
-                      <input
-                        type="text"
-                        value={traco.nome}
-                        onChange={(e) => handleTracoChange(index, 'nome', e.target.value)}
-                        className="input-field w-full"
-                        placeholder={`Nome do ${formData.tipo === 'personagem' ? 'traço' : 'parte'}`}
-                      />
-                    </div>
-
-                    {formData.tipo === 'monstro' && (
-                      <div className="form-field">
-                        <label className="block text-wilder-200 mb-2">Resistência</label>
-                        <input
-                          type="number"
-                          value={traco.resistencia || 0}
-                          onChange={(e) => handleTracoChange(index, 'resistencia', parseInt(e.target.value) || 0)}
-                          className="input-field w-full"
-                          min="0"
-                        />
-                      </div>
-                    )}
-
-                    <div className="form-field">
-                      <label className="block text-wilder-200 mb-2">Descrição</label>
-                      <textarea
-                        value={traco.descricao}
-                        onChange={(e) => handleTracoChange(index, 'descricao', e.target.value)}
-                        className="input-field w-full min-h-[80px]"
-                        placeholder={`Descrição do ${formData.tipo === 'personagem' ? 'traço' : 'parte'}`}
-                        rows={3}
-                      />
-                    </div>
-                  </div>
+            <div className="card p-6 mb-4">
+              <div className="flex items-start gap-4">
+                <div className="p-3 rounded-full bg-wilder-700/50">
+                  <FiFilter className="w-6 h-6 text-mystic-gold" />
                 </div>
-              ))}
+                <div>
+                  <h3 className="text-lg font-medium text-wilder-100 mb-1">
+                    Escolha seus Traços
+                  </h3>
+                  <p className="text-wilder-300">
+                    Selecione {maxTracos} traços para seu personagem. Cada traço concede uma habilidade única que define seu estilo de jogo.
+                  </p>
+                </div>
+              </div>
+            </div>
 
-              <button
-                type="button"
-                onClick={handleTracoAdd}
-                className="btn btn-primary w-full"
-              >
-                Adicionar {formData.tipo === 'personagem' ? 'Traço' : 'Parte'}
-              </button>
+            {/* Traços Selecionados */}
+            <AnimatePresence>
+              {selectedTracos.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="bg-wilder-800/50 rounded-lg p-4"
+                >
+                  <h3 className="text-lg font-title text-mystic-gold mb-4 flex items-center gap-2">
+                    <FiCheck className="w-5 h-5" /> Traços Selecionados
+                  </h3>
+                  <div className="space-y-3">
+                    {selectedTracos.map((traco) => (
+                      <motion.div
+                        key={traco.id}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 20 }}
+                        className="flex items-start gap-3 bg-wilder-700/50 p-4 rounded-lg group hover:bg-wilder-700 transition-colors"
+                      >
+                        <div className="flex-1">
+                          <h4 className="text-wilder-100 font-medium flex items-center gap-2">
+                            {traco.nome}
+                            <span className="text-xs px-2 py-1 rounded-full bg-mystic-gold/20 text-mystic-gold">
+                              Selecionado
+                            </span>
+                          </h4>
+                          <p className="text-wilder-300 text-sm mt-2">{traco.descricao}</p>
+                        </div>
+                        <button
+                          onClick={() => handleTracoSelect(traco)}
+                          className="text-wilder-400 hover:text-mystic-red p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <FiX className="w-5 h-5" />
+                        </button>
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Lista de Traços Disponíveis */}
+            <div className="space-y-4">
+              <div className="sticky top-0 z-10 bg-wilder-900/95 backdrop-blur-sm py-4">
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Buscar traços por nome ou descrição..."
+                    className="input-field w-full pl-10"
+                    onChange={(e) => setTracoSearch(e.target.value)}
+                  />
+                  <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-wilder-400" />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {tracos
+                  .filter(traco => 
+                    traco.nome.toLowerCase().includes(tracoSearch?.toLowerCase() || '') ||
+                    traco.descricao.toLowerCase().includes(tracoSearch?.toLowerCase() || '')
+                  )
+                  .map((traco) => {
+                    const isSelected = selectedTracos.find(t => t.id === traco.id)
+                    const isDisabled = selectedTracos.length >= maxTracos && !isSelected
+
+                    return (
+                      <motion.div
+                        key={traco.id}
+                        layout
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        onClick={() => !isDisabled && handleTracoSelect(traco)}
+                        className={`
+                          relative group cursor-pointer transition-all duration-200
+                          ${isSelected 
+                            ? 'ring-2 ring-mystic-gold ring-opacity-50' 
+                            : isDisabled
+                              ? 'opacity-50 cursor-not-allowed'
+                              : 'hover:transform hover:-translate-y-1 hover:shadow-lg'
+                          }
+                        `}
+                      >
+                        <div className={`
+                          card p-4 transition-colors duration-200
+                          ${isSelected 
+                            ? 'bg-wilder-700/50' 
+                            : 'hover:bg-wilder-800'
+                          }
+                        `}>
+                          <div className="flex items-start justify-between gap-4">
+                            <h3 className="text-lg font-title text-mystic-gold">
+                              {traco.nome}
+                            </h3>
+                            {isSelected ? (
+                              <span className="text-mystic-gold bg-mystic-gold/20 p-1 rounded-full">
+                                <FiCheck className="w-5 h-5" />
+                              </span>
+                            ) : !isDisabled && (
+                              <span className="text-wilder-400 group-hover:text-mystic-gold transition-colors">
+                                <FiPlus className="w-5 h-5" />
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-wilder-200 text-sm mt-2">
+                            {traco.descricao}
+                          </p>
+                        </div>
+                      </motion.div>
+                    )
+                  })}
+              </div>
             </div>
           </div>
         )
