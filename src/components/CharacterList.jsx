@@ -16,11 +16,13 @@ import {
   FiHeart,
   FiX,
   FiEdit3,
-  FiEye
+  FiEye,
+  FiDownload
 } from 'react-icons/fi'
 import ParticlesBackground from './ParticlesBackground'
 import ImportExportCharacters from './ImportExportCharacters'
 import CharacterCard from './CharacterCard'
+import ExportPDFModal from './ExportPDFModal'
 
 export default function CharacterList() {
   const { characters } = useCharacters()
@@ -31,6 +33,7 @@ export default function CharacterList() {
   const [filter, setFilter] = useState('todos')
   const [viewMode, setViewMode] = useState('grid')
   const [selectedCharacter, setSelectedCharacter] = useState(null)
+  const [showPDFModal, setShowPDFModal] = useState(false)
 
   const characterArray = Array.isArray(characters) 
     ? characters 
@@ -353,13 +356,29 @@ export default function CharacterList() {
                 </button>
                 <button 
                   onClick={(e) => handleViewClick(e, selectedCharacter.id)}
+                  className="btn flex-1 flex items-center justify-center gap-2"
+                >
+                  <FiEye /> Ver Ficha
+                </button>
+                <button 
+                  onClick={() => setShowPDFModal(true)}
                   className="btn btn-primary flex-1 flex items-center justify-center gap-2"
                 >
-                  <FiEye /> Ver Ficha Completa
+                  <FiDownload /> Exportar PDF
                 </button>
               </div>
             </motion.div>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Adicione o modal de PDF */}
+      <AnimatePresence>
+        {showPDFModal && (
+          <ExportPDFModal
+            character={selectedCharacter}
+            onClose={() => setShowPDFModal(false)}
+          />
         )}
       </AnimatePresence>
     </div>

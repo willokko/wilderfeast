@@ -11,6 +11,7 @@
   
   body {
     @apply bg-wilder-900 text-wilder-100 min-h-screen bg-texture bg-repeat bg-opacity-5 overflow-x-hidden;
+    background-image: url('/wilderfeast/textures/paper-texture.png');
   }
 
   #root {
@@ -185,7 +186,7 @@
   width: 1px;
   height: 1px;
   background: transparent;
-  box-shadow: 1744px 122px #E2E8F0,134px 1321px #E2E8F0,... /* mais pontos aqui */;
+  box-shadow: 1744px 122px #E2E8F0,134px 1321px #E2E8F0;
   animation: animStar 50s linear infinite;
 }
 
@@ -193,7 +194,7 @@
   width: 2px;
   height: 2px;
   background: transparent;
-  box-shadow: 1744px 122px #E2E8F0,134px 1321px #E2E8F0,... /* mais pontos aqui */;
+  box-shadow: 1744px 122px #E2E8F0,134px 1321px #E2E8F0;
   animation: animStar 100s linear infinite;
 }
 
@@ -201,7 +202,7 @@
   width: 3px;
   height: 3px;
   background: transparent;
-  box-shadow: 1744px 122px #E2E8F0,134px 1321px #E2E8F0,... /* mais pontos aqui */;
+  box-shadow: 1744px 122px #E2E8F0,134px 1321px #E2E8F0;
   animation: animStar 150s linear infinite;
 }
 

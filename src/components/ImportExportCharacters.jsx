@@ -1,14 +1,17 @@
 import { useState, useRef } from 'react'
 import { useCharacters } from '../contexts/CharacterContext'
-import { FiDownload, FiUpload, FiX, FiCheck } from 'react-icons/fi'
+import { FiDownload, FiUpload, FiX, FiCheck, FiFilePlus } from 'react-icons/fi'
 import { motion, AnimatePresence } from 'framer-motion'
+import ExportPDFModal from './ExportPDFModal'
 
 export default function ImportExportCharacters() {
   const { characters, addCharacter } = useCharacters()
   const [showImportModal, setShowImportModal] = useState(false)
   const [showExportModal, setShowExportModal] = useState(false)
+  const [showExportPDFModal, setShowExportPDFModal] = useState(false)
   const [error, setError] = useState('')
   const [selectedCharacters, setSelectedCharacters] = useState([])
+  const [selectedCharacterForPDF, setSelectedCharacterForPDF] = useState(null)
   const fileInputRef = useRef(null)
 
   const handleExport = () => {
@@ -84,20 +87,34 @@ export default function ImportExportCharacters() {
     reader.readAsText(file)
   }
 
+  const handleExportPDF = (character = null) => {
+    if (character) {
+      setSelectedCharacterForPDF(character)
+    } else if (selectedCharacters.length === 1) {
+      setSelectedCharacterForPDF(characters[selectedCharacters[0]])
+    } else {
+      // Aqui você pode implementar a lógica para exportar múltiplos PDFs
+      // Por enquanto, vamos apenas alertar o usuário
+      alert('Por favor, selecione apenas um personagem para exportar o PDF')
+      return
+    }
+    setShowExportPDFModal(true)
+  }
+
   return (
     <>
       <div className="flex gap-2">
         <button
           onClick={() => setShowExportModal(true)}
-          className="btn btn-secondary flex items-center gap-2"
+          className="btn flex items-center gap-2"
         >
-          <FiDownload className="w-4 h-4" /> Exportar
+          <FiDownload /> Exportar
         </button>
         <button
           onClick={() => setShowImportModal(true)}
-          className="btn btn-secondary flex items-center gap-2"
+          className="btn flex items-center gap-2"
         >
-          <FiUpload className="w-4 h-4" /> Importar
+          <FiUpload /> Importar
         </button>
       </div>
 
@@ -115,7 +132,7 @@ export default function ImportExportCharacters() {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-wilder-800 rounded-lg p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto"
+              className="bg-wilder-800 rounded-lg p-6 max-w-lg w-full"
               onClick={e => e.stopPropagation()}
             >
               <div className="flex justify-between items-center mb-4">
@@ -128,92 +145,61 @@ export default function ImportExportCharacters() {
                 </button>
               </div>
 
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <p className="text-wilder-200">
-                    Selecione os personagens que deseja exportar
-                  </p>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={selectAllCharacters}
-                      className="text-sm text-mystic-gold hover:underline"
-                    >
-                      Selecionar Todos
-                    </button>
-                    <button
-                      onClick={deselectAllCharacters}
-                      className="text-sm text-mystic-gold hover:underline"
-                    >
-                      Limpar Seleção
-                    </button>
-                  </div>
-                </div>
-
-                <div className="space-y-2 max-h-96 overflow-y-auto">
-                  {Object.entries(characters).map(([id, character]) => (
-                    <div
-                      key={id}
-                      onClick={() => toggleCharacterSelection(id)}
-                      className={`
-                        flex items-center gap-3 p-3 rounded-lg cursor-pointer
-                        transition-colors duration-200
-                        ${selectedCharacters.includes(id)
-                          ? 'bg-mystic-gold/20 border-2 border-mystic-gold'
-                          : 'bg-wilder-700/50 border-2 border-transparent hover:bg-wilder-700'
-                        }
-                      `}
-                    >
-                      <div className="w-10 h-10 rounded-full overflow-hidden bg-wilder-700 flex-shrink-0">
-                        {character.imagem ? (
-                          <img
-                            src={character.imagem}
-                            alt={character.nome}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center">
-                            <FiUpload className="w-5 h-5 text-wilder-500" />
-                          </div>
-                        )}
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="text-wilder-100 font-medium">{character.nome}</h3>
-                        <p className="text-sm text-wilder-300 capitalize">{character.tipo}</p>
-                      </div>
-                      <div className={`
-                        w-6 h-6 rounded-full border-2
-                        flex items-center justify-center
-                        ${selectedCharacters.includes(id)
-                          ? 'border-mystic-gold bg-mystic-gold text-wilder-900'
-                          : 'border-wilder-500'
-                        }
-                      `}>
-                        {selectedCharacters.includes(id) && (
-                          <FiCheck className="w-4 h-4" />
-                        )}
-                      </div>
+              <div className="space-y-2 max-h-96 overflow-y-auto">
+                {Object.entries(characters).map(([id, character]) => (
+                  <div
+                    key={id}
+                    onClick={() => toggleCharacterSelection(id)}
+                    className={`
+                      flex items-center gap-3 p-3 rounded-lg cursor-pointer
+                      transition-colors duration-200
+                      ${selectedCharacters.includes(id)
+                        ? 'bg-mystic-gold/20 border-2 border-mystic-gold'
+                        : 'bg-wilder-700/50 border-2 border-transparent hover:bg-wilder-700'
+                      }
+                    `}
+                  >
+                    <div className="w-10 h-10 rounded-full overflow-hidden bg-wilder-700 flex-shrink-0">
+                      {character.imagem ? (
+                        <img
+                          src={character.imagem}
+                          alt={character.nome}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <FiUpload className="w-5 h-5 text-wilder-500" />
+                        </div>
+                      )}
                     </div>
-                  ))}
-                </div>
+                    <div className="flex-1">
+                      <h3 className="text-wilder-100 font-medium">{character.nome}</h3>
+                      <p className="text-sm text-wilder-300 capitalize">{character.tipo}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
 
-                <div className="flex justify-end gap-3 mt-6">
-                  <button
-                    onClick={() => setShowExportModal(false)}
-                    className="btn"
-                  >
-                    Cancelar
-                  </button>
-                  <button
-                    onClick={handleExport}
-                    className="btn btn-primary flex items-center gap-2"
-                  >
-                    <FiDownload className="w-4 h-4" />
-                    {selectedCharacters.length > 0
-                      ? `Exportar (${selectedCharacters.length})`
-                      : 'Exportar Todos'
-                    }
-                  </button>
-                </div>
+              <div className="flex gap-2 mt-4">
+                <button
+                  onClick={() => setShowExportModal(false)}
+                  className="btn"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleExport}
+                  className="btn flex items-center gap-2"
+                >
+                  <FiDownload /> Exportar JSON
+                </button>
+                <button
+                  onClick={() => handleExportPDF()}
+                  className="btn btn-primary flex items-center gap-2"
+                  disabled={selectedCharacters.length !== 1}
+                >
+                  <FiFilePlus /> Exportar PDF
+                </button>
               </div>
             </motion.div>
           </motion.div>
@@ -279,6 +265,19 @@ export default function ImportExportCharacters() {
               </div>
             </motion.div>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Modal de PDF */}
+      <AnimatePresence>
+        {showExportPDFModal && selectedCharacterForPDF && (
+          <ExportPDFModal
+            character={selectedCharacterForPDF}
+            onClose={() => {
+              setShowExportPDFModal(false)
+              setSelectedCharacterForPDF(null)
+            }}
+          />
         )}
       </AnimatePresence>
     </>
