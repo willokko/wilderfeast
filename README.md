@@ -1,6 +1,6 @@
 # 🎲 Gerenciador de Personagens RPG WilderFeast
 
-![Banner WilderFeast](link-para-seu-banner.png)
+![Banner WilderFeast](https://i.pinimg.com/736x/87/b8/41/87b8415cb5e53c7f0c6c168b0547824d.jpg)
 
 ## 🌟 Sobre o Projeto
 
