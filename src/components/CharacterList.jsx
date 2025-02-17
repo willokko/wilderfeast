@@ -19,6 +19,7 @@ import {
   FiEye
 } from 'react-icons/fi'
 import ParticlesBackground from './ParticlesBackground'
+import ImportExportCharacters from './ImportExportCharacters'
 
 export default function CharacterList() {
   const { characters } = useCharacters()
@@ -82,10 +83,9 @@ export default function CharacterList() {
   }
 
   return (
-    <div className="min-h-screen max-w-full overflow-hidden">
+    <div className="min-h-screen pt-20">
       {/* Hero Section */}
-      <div className="relative h-48 xs:h-64 sm:h-96 mb-6 xs:mb-8 sm:mb-12 
-                    bg-wood bg-cover bg-fixed bg-center overflow-hidden w-full">
+      <div className="relative h-[60vh] mb-12 bg-wood bg-cover bg-fixed bg-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-wilder-900/70 to-wilder-900/90" />
         <motion.div 
           className="relative container mx-auto px-4 h-full flex flex-col justify-center items-center"
@@ -93,30 +93,42 @@ export default function CharacterList() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <h1 
-            className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-title 
-                     mb-3 xs:mb-4 sm:mb-6 tracking-wider text-center"
-          >
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-title mb-6 tracking-wider text-center">
             WilderFeast
           </h1>
-          <p className="text-sm xs:text-base sm:text-lg md:text-xl max-w-2xl mx-auto 
-                     text-center mb-4 xs:mb-6 sm:mb-8 px-4 text-wilder-200">
+          <p className="text-base sm:text-lg md:text-xl max-w-2xl mx-auto text-center mb-8 px-4 text-wilder-200">
             Um mundo de mistério e perigo aguarda. Crie seus personagens e monstros 
             para explorar as profundezas da floresta selvagem.
           </p>
-          <Link 
-            to="/create" 
-            className="btn btn-primary flex items-center gap-2 text-sm xs:text-base sm:text-lg 
-                     px-3 xs:px-4 sm:px-6 py-2 sm:py-3 transform hover:scale-105 transition-transform"
-          >
-            <FiPlus className="w-4 h-4 xs:w-5 xs:h-5" /> Criar Nova Entidade
-          </Link>
         </motion.div>
       </div>
 
-      <div className="w-full px-3 xs:px-4 sm:px-6 max-w-7xl mx-auto">
-        {/* Barra de Busca e Filtros */}
-        <div className="flex flex-col gap-4 mb-6 w-full">
+      {/* Content Section */}
+      <div className="container mx-auto px-4">
+        {/* Actions Bar */}
+        <div className="sticky top-20 z-30 bg-wilder-900/95 backdrop-blur-sm py-4 mb-8 border-b border-wilder-700">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+              <h2 className="text-2xl font-title mb-2">Seus Personagens</h2>
+              <p className="text-wilder-300">
+                Gerencie seus personagens e monstros
+              </p>
+            </div>
+            
+            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+              <ImportExportCharacters />
+              <Link 
+                to="/create" 
+                className="btn btn-primary flex items-center gap-2 justify-center sm:justify-start"
+              >
+                <FiPlus /> Criar Personagem
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Search and Filters */}
+        <div className="space-y-6 mb-8">
           {/* Busca */}
           <div className="w-full relative">
             <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-wilder-400 w-5 h-5" />
@@ -125,74 +137,68 @@ export default function CharacterList() {
               placeholder="Buscar personagens..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-wilder-800 rounded-lg
+              className="w-full pl-10 pr-4 py-3 bg-wilder-800 rounded-lg
                        text-sm border-2 border-wilder-700 focus:border-mystic-gold"
             />
           </div>
 
           {/* Filtros e Visualização */}
-          <div className="flex justify-between items-center w-full">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             {/* Filtros com touch scroll */}
             <div 
               ref={filterScrollRef}
-              className="flex gap-2 overflow-x-auto pb-2 max-w-[70%] hide-scrollbar touch-pan-x"
+              className="flex gap-3 overflow-x-auto pb-2 hide-scrollbar touch-pan-x w-full sm:w-auto"
               onTouchStart={handleTouchScroll}
             >
-              <div className="flex gap-2 px-0.5">
-                <button
-                  onClick={() => setFilter('todos')}
-                  className={`px-3 py-1.5 rounded-full text-sm border-2 whitespace-nowrap
-                           touch-manipulation select-none active:scale-95 transition-transform
-                           ${filter === 'todos' 
-                             ? 'bg-mystic-gold border-mystic-gold text-wilder-900' 
-                             : 'border-wilder-700 text-wilder-200'}`}
-                >
-                  Todos
-                </button>
-                <button
-                  onClick={() => setFilter('personagem')}
-                  className={`px-3 py-1.5 rounded-full text-sm border-2 whitespace-nowrap
-                           touch-manipulation select-none active:scale-95 transition-transform
-                           ${filter === 'personagem' 
-                             ? 'bg-mystic-gold border-mystic-gold text-wilder-900' 
-                             : 'border-wilder-700 text-wilder-200'}`}
-                >
-                  Personagens
-                </button>
-                <button
-                  onClick={() => setFilter('monstro')}
-                  className={`px-3 py-1.5 rounded-full text-sm border-2 whitespace-nowrap
-                           touch-manipulation select-none active:scale-95 transition-transform
-                           ${filter === 'monstro' 
-                             ? 'bg-mystic-red border-mystic-red text-wilder-900' 
-                             : 'border-wilder-700 text-wilder-200'}`}
-                >
-                  Monstros
-                </button>
-              </div>
+              <button
+                onClick={() => setFilter('todos')}
+                className={`px-4 py-2 rounded-lg text-sm whitespace-nowrap
+                         transition-all duration-200 flex-shrink-0
+                         ${filter === 'todos' 
+                           ? 'bg-mystic-gold text-wilder-900 border-2 border-mystic-gold' 
+                           : 'bg-wilder-800 text-wilder-200 border-2 border-wilder-700 hover:bg-wilder-700'}`}
+              >
+                Todos
+              </button>
+              <button
+                onClick={() => setFilter('personagem')}
+                className={`px-4 py-2 rounded-lg text-sm whitespace-nowrap
+                         transition-all duration-200 flex-shrink-0
+                         ${filter === 'personagem' 
+                           ? 'bg-mystic-gold text-wilder-900 border-2 border-mystic-gold' 
+                           : 'bg-wilder-800 text-wilder-200 border-2 border-wilder-700 hover:bg-wilder-700'}`}
+              >
+                Personagens
+              </button>
+              <button
+                onClick={() => setFilter('monstro')}
+                className={`px-4 py-2 rounded-lg text-sm whitespace-nowrap
+                         transition-all duration-200 flex-shrink-0
+                         ${filter === 'monstro' 
+                           ? 'bg-mystic-red text-wilder-900 border-2 border-mystic-red' 
+                           : 'bg-wilder-800 text-wilder-200 border-2 border-wilder-700 hover:bg-wilder-700'}`}
+              >
+                Monstros
+              </button>
             </div>
 
             {/* Visualização */}
             <div className="flex gap-2">
               <button
                 onClick={() => setViewMode('grid')}
-                className={`p-2 rounded-lg touch-manipulation select-none 
-                         active:scale-95 transition-transform ${
-                  viewMode === 'grid' 
-                    ? 'bg-mystic-gold text-wilder-900' 
-                    : 'bg-wilder-700 text-wilder-200'
-                }`}
+                className={`p-2 rounded-lg transition-all duration-200
+                         ${viewMode === 'grid' 
+                           ? 'bg-mystic-gold text-wilder-900' 
+                           : 'bg-wilder-800 text-wilder-200 hover:bg-wilder-700'}`}
               >
                 <FiGrid className="w-5 h-5" />
               </button>
               <button
                 onClick={() => setViewMode('list')}
-                className={`p-2 rounded-lg touch-manipulation select-none 
-                         active:scale-95 transition-transform ${
-                  viewMode === 'list' 
-                    ? 'bg-mystic-gold text-wilder-900' 
-                    : 'bg-wilder-700 text-wilder-200'
-                }`}
+                className={`p-2 rounded-lg transition-all duration-200
+                         ${viewMode === 'list' 
+                           ? 'bg-mystic-gold text-wilder-900' 
+                           : 'bg-wilder-800 text-wilder-200 hover:bg-wilder-700'}`}
               >
                 <FiList className="w-5 h-5" />
               </button>
@@ -200,18 +206,23 @@ export default function CharacterList() {
           </div>
         </div>
 
-        {/* Lista de Personagens */}
+        {/* Characters Grid/List */}
         <div className={
           viewMode === 'grid'
-            ? "grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+            ? "grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
             : "flex flex-col gap-4"
         }>
           {filteredCharacters.map(character => (
-            <div 
+            <motion.div 
               key={character.id}
+              layout
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
               onClick={(e) => handleCharacterClick(e, character)}
-              className="cursor-pointer bg-wilder-800 rounded-lg overflow-hidden 
-                       hover:border-mystic-gold transition-all duration-200"
+              className={`
+                character-card cursor-pointer
+                ${character.tipo === 'monstro' ? 'monstro' : 'personagem'}
+              `}
             >
               <div className={
                 viewMode === 'list'
@@ -238,7 +249,7 @@ export default function CharacterList() {
                   {character.tipo}
                 </p>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>

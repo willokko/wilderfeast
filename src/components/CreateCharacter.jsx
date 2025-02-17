@@ -626,71 +626,78 @@ export default function CreateCharacter() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-6 sm:py-8">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
-        <div className="lg:col-span-2">
-          <div className="mb-6 sm:mb-8">
-            <Link to="/" className="text-wilder-300 hover:text-wilder-100 mb-4 inline-flex items-center gap-2">
-              <FiArrowLeft /> Voltar
-            </Link>
-            <h1 className="text-3xl sm:text-4xl font-title mb-6">
-              Criar Novo {formData.tipo === 'personagem' ? 'Personagem' : 'Monstro'}
-            </h1>
-            
-            <div className="flex gap-2">
-              {[1, 2, 3, 4].map(step => (
-                <button
-                  key={step}
-                  onClick={() => setCurrentStep(step)}
-                  className={`step-indicator ${currentStep === step ? 'active' : ''}`}
-                />
-              ))}
+    <div className="min-h-screen pt-20">
+      <div className="container mx-auto px-4 py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
+          <div className="lg:col-span-2">
+            <div className="sticky top-24 z-20 bg-wilder-900/95 backdrop-blur-sm py-4 mb-8">
+              <Link 
+                to="/" 
+                className="text-wilder-300 hover:text-wilder-100 mb-4 inline-flex items-center gap-2"
+              >
+                <FiArrowLeft /> Voltar
+              </Link>
+              <h1 className="text-3xl sm:text-4xl font-title mb-6">
+                Criar Novo {formData.tipo === 'personagem' ? 'Personagem' : 'Monstro'}
+              </h1>
+              
+              <div className="flex gap-2">
+                {[1, 2, 3, 4].map(step => (
+                  <button
+                    key={step}
+                    onClick={() => setCurrentStep(step)}
+                    className={`step-indicator ${currentStep === step ? 'active' : ''}`}
+                  />
+                ))}
+              </div>
             </div>
+
+            <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
+              <motion.div
+                key={currentStep}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="space-y-6"
+              >
+                {renderStep()}
+              </motion.div>
+
+              <div className="flex justify-end gap-4">
+                {currentStep > 1 && (
+                  <button
+                    type="button"
+                    onClick={handlePreviousStep}
+                    className="btn btn-secondary"
+                  >
+                    Anterior
+                  </button>
+                )}
+                {currentStep < 4 ? (
+                  <button
+                    type="button"
+                    onClick={handleNextStep}
+                    className="btn btn-primary"
+                  >
+                    Próximo
+                  </button>
+                ) : (
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                  >
+                    Criar {formData.tipo === 'personagem' ? 'Personagem' : 'Monstro'}
+                  </button>
+                )}
+              </div>
+            </form>
           </div>
 
-          <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
-            <motion.div
-              key={currentStep}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="space-y-6"
-            >
-              {renderStep()}
-            </motion.div>
-
-            <div className="flex justify-end gap-4">
-              {currentStep > 1 && (
-                <button
-                  type="button"
-                  onClick={handlePreviousStep}
-                  className="btn btn-secondary"
-                >
-                  Anterior
-                </button>
-              )}
-              {currentStep < 4 ? (
-                <button
-                  type="button"
-                  onClick={handleNextStep}
-                  className="btn btn-primary"
-                >
-                  Próximo
-                </button>
-              ) : (
-                <button
-                  type="submit"
-                  className="btn btn-primary"
-                >
-                  Criar {formData.tipo === 'personagem' ? 'Personagem' : 'Monstro'}
-                </button>
-              )}
+          <div className="lg:col-span-1">
+            <div className="sticky top-24">
+              <CharacterPreview data={formData} imagePreview={imagePreview} />
             </div>
-          </form>
-        </div>
-
-        <div className="lg:col-span-1">
-          <CharacterPreview data={formData} imagePreview={imagePreview} />
+          </div>
         </div>
       </div>
     </div>
