@@ -3,8 +3,10 @@
 ![Banner WilderFeast](https://i.pinimg.com/736x/87/b8/41/87b8415cb5e53c7f0c6c168b0547824d.jpg)
 
 > 🚀 **Versão Atual:** v5.0
+> 
+> 📅 **Última Atualização:** Fevereiro 2024
 
-## 🌟 Sobre o Projeto
+## �� Sobre o Projeto
 
 O **Gerenciador de Personagens RPG WilderFeast** é uma aplicação web moderna projetada para auxiliar mestres e jogadores na criação, gerenciamento e exportação de fichas de personagens e monstros no universo do RPG WilderFeast. Com uma interface intuitiva e elegante, a ferramenta proporciona uma experiência fluida e envolvente.
 
