@@ -104,6 +104,8 @@ Este projeto está sob a licença MIT.
 ## 👥 Autores
 
 * **Willokko** - *Trabalho Inicial* - [Willokko](https://github.com/willokko)
+* **Anthony-Richard1** - *Contribuidor* - [Anthony-Richard1](https://github.com/Anthony-Richard1)
+
 
 ## 🙏 Agradecimentos
 
