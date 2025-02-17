@@ -1,0 +1,1 @@
+// Este arquivo pode ser deletado, pois as rotas agora estão no App.jsx 

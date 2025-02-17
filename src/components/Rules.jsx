@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 
 export default function Rules() {
   useEffect(() => {
-    document.title = "Regras de Criação de Personagem - Wilder Feast"
+    document.title = "Regras de Criação de Personagem - WilderFeast"
   }, [])
 
   return (
@@ -12,7 +12,7 @@ export default function Rules() {
       <section className="mb-8">
         <h2 className="text-2xl font-title mb-4 text-mystic-gold">1. Escolha de Raça</h2>
         <p className="text-wilder-200">
-          No Wilder Feast, você pode escolher entre várias raças, cada uma com suas próprias habilidades e características únicas. As raças disponíveis são:
+          No WilderFeast, você pode escolher entre várias raças, cada uma com suas próprias habilidades e características únicas. As raças disponíveis são:
         </p>
         <ul className="list-disc list-inside text-wilder-300 mt-2">
           <li>Humano</li>

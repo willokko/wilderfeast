@@ -1,19 +1,27 @@
-import { BrowserRouter } from 'react-router-dom'
+import { HashRouter as Router, Routes, Route } from 'react-router-dom'
 import { CharacterProvider } from './contexts/CharacterContext'
-import AppRoutes from './routes'
 import Header from './components/Header'
+import CharacterList from './components/CharacterList'
+import CreateCharacter from './components/CreateCharacter'
+import EditCharacter from './components/EditCharacter'
+import ViewCharacter from './components/ViewCharacter'
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <Router>
       <CharacterProvider>
-        <div className="min-h-screen bg-wilder-900">
+        <div className="min-h-screen bg-wilder-900 text-wilder-100">
           <Header />
-          <main className="container mx-auto px-4 py-8 mt-16">
-            <AppRoutes />
+          <main>
+            <Routes>
+              <Route path="/" element={<CharacterList />} />
+              <Route path="/create" element={<CreateCharacter />} />
+              <Route path="/edit/:id" element={<EditCharacter />} />
+              <Route path="/view/:id" element={<ViewCharacter />} />
+            </Routes>
           </main>
         </div>
       </CharacterProvider>
-    </BrowserRouter>
+    </Router>
   )
 }

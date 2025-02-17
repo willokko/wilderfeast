@@ -6,11 +6,16 @@
 
 @layer base {
   html {
-    @apply antialiased;
+    @apply antialiased overflow-x-hidden;
   }
   
   body {
-    @apply bg-wilder-900 text-wilder-100 min-h-screen bg-texture bg-repeat bg-opacity-5;
+    @apply bg-wilder-900 text-wilder-100 min-h-screen bg-texture bg-repeat bg-opacity-5 overflow-x-hidden;
+    background-image: url('/wilderfeast/textures/paper-texture.png');
+  }
+
+  #root {
+    @apply overflow-x-hidden;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -30,7 +35,8 @@
 
   .character-card {
     @apply bg-wilder-800 rounded-lg overflow-hidden border-2 border-wilder-700
-           transition-all duration-200 hover:border-mystic-gold hover:shadow-lg;
+           transition-all duration-200 hover:border-mystic-gold hover:shadow-lg
+           w-full h-full;
   }
 
   .character-card.personagem:hover {
@@ -180,7 +186,7 @@
   width: 1px;
   height: 1px;
   background: transparent;
-  box-shadow: 1744px 122px #E2E8F0,134px 1321px #E2E8F0,... /* mais pontos aqui */;
+  box-shadow: 1744px 122px #E2E8F0,134px 1321px #E2E8F0;
   animation: animStar 50s linear infinite;
 }
 
@@ -188,7 +194,7 @@
   width: 2px;
   height: 2px;
   background: transparent;
-  box-shadow: 1744px 122px #E2E8F0,134px 1321px #E2E8F0,... /* mais pontos aqui */;
+  box-shadow: 1744px 122px #E2E8F0,134px 1321px #E2E8F0;
   animation: animStar 100s linear infinite;
 }
 
@@ -196,6 +202,49 @@
   width: 3px;
   height: 3px;
   background: transparent;
-  box-shadow: 1744px 122px #E2E8F0,134px 1321px #E2E8F0,... /* mais pontos aqui */;
+  box-shadow: 1744px 122px #E2E8F0,134px 1321px #E2E8F0;
   animation: animStar 150s linear infinite;
+}
+
+@layer utilities {
+  .hide-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;     /* Firefox */
+  }
+  
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari and Opera */
+  }
+
+  .touch-pan-x {
+    touch-action: pan-x;
+  }
+
+  .character-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4;
+  }
+}
+
+/* Força a aplicação do grid */
+.grid {
+  display: grid !important;
+}
+
+/* Força os breakpoints do grid */
+@media (min-width: 640px) {
+  .sm\:grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .lg\:grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (min-width: 1280px) {
+  .xl\:grid-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
 } 

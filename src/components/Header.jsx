@@ -55,20 +55,18 @@ export default function Header() {
     <>
       <header 
         ref={headerRef}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300
-                   ${isScrolled 
-                     ? 'bg-wilder-900/95 backdrop-blur-md shadow-lg' 
-                     : 'bg-wilder-900'}`}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 
+                   ${isScrolled ? 'bg-wilder-900/95 backdrop-blur-sm shadow-lg' : 'bg-transparent'}`}
       >
-        <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center h-16">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex justify-between items-center">
             {/* Brand */}
             <Link 
               to="/" 
-              className="text-2xl md:text-3xl font-title text-wilder-100 
+              className="text-2xl font-title tracking-wider text-wilder-100 
                        hover:text-mystic-gold transition-colors"
             >
-              Wilder Feast
+              WilderFeast
             </Link>
 
             {/* Desktop Navigation */}
